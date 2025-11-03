@@ -1,11 +1,13 @@
-# Git ignore rules
-@"
-# Node / VSCode
+# ==========================
+# 🧩 Node / Frontend / VSCode
+# ==========================
 node_modules/
 dist/
 .vscode/
 
-# Java / Eclipse / Spring
+# ==========================
+# ☕ Java / Eclipse / Spring
+# ==========================
 *.class
 *.jar
 *.war
@@ -14,5 +16,23 @@ dist/
 /bin/
 .idea/
 *.iml
+
+# ==========================
+# 🪶 OS & Misc
+# ==========================
 .DS_Store
-"@ | Out-File -Encoding utf8 .gitignore
+
+# ==========================
+# 📦 Archives / Packages
+# ==========================
+*.zip
+*.tar.gz
+*.rar
+*.nar
+
+# ==========================
+# 🧨 Logs / Crash Reports
+# ==========================
+*.log
+hs_err_pid*
+replay_pid*
