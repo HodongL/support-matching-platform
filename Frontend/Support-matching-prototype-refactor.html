@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>맞춤형 지원사업 플랫폼 · Refactor</title>
+  <style>
+    :root{
+      --bg:#0b0f14; --panel:#121821; --muted:#8ca0b3; --text:#e8eef5; --acc:#5cc8ff; --chip:#1b2330; --ok:#40d1a7; --warn:#ffd166;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,Malgun Gothic,Arial,sans-serif;background:linear-gradient(180deg,#0b0f14 0%,#0e141d 100%);color:var(--text)}
+    a{color:var(--acc);text-decoration:none}
+    .container{max-width:1200px;margin:0 auto;padding:24px}
+    header{position:sticky;top:0;z-index:50;background:rgba(11,15,20,.85);backdrop-filter:blur(8px);border-bottom:1px solid #1e293b}
+    .nav{display:flex;align-items:center;gap:16px;justify-content:space-between;padding:12px 24px}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:700}
+    .brand .dot{width:10px;height:10px;border-radius:50%;background:var(--acc);box-shadow:0 0 20px #38bdf8}
+    .actions{display:flex;gap:10px}
+    .btn{border:1px solid #2b394a;background:#0f1622;color:var(--text);padding:10px 14px;border-radius:12px;font-weight:600;cursor:pointer}
+    .btn.acc{background:linear-gradient(90deg,#2aa1ff,#6ee7ff);color:#00131f;border:0}
+    .btn.ghost{background:#0f162200;border:1px solid #2b394a}
+    .btn.small{padding:6px 10px;font-size:.9rem;border-radius:10px}
+    .btn:disabled{opacity:.6;cursor:not-allowed}
+    .hero{padding:28px 24px 8px;border-bottom:1px solid #1e293b}
+    .hero h1{margin:0 0 6px;font-size:28px}
+    .muted{color:var(--muted)}
+
+    /* Filters */
+    .filters{background:var(--panel);border:1px solid #1f2a3a;border-radius:16px;padding:16px;display:grid;grid-template-columns:repeat(12,1fr);gap:12px;margin-top:16px}
+    .f{display:flex;flex-direction:column;gap:8px}
+    .f label{font-size:.9rem;color:#b6c5d6}
+    .input,.select{background:#0f1622;border:1px solid #233041;color:var(--text);padding:10px 12px;border-radius:12px;width:100%}
+    .chiprow{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{background:var(--chip);border:1px solid #253244;color:#c6d5e5;padding:6px 10px;border-radius:9999px;font-size:.85rem}
+
+    /* Results */
+    .toolbar{display:flex;align-items:center;justify-content:space-between;margin:18px 0}
+    .results{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .card{background:var(--panel);border:1px solid #1f2a3a;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px}
+    .title{font-weight:700;font-size:1.05rem}
+    .badges{display:flex;gap:8px;flex-wrap:wrap}
+    .badge{background:#0e1520;border:1px solid #273445;color:#9ec7ff;padding:4px 8px;border-radius:10px;font-size:.78rem}
+    .period{font-size:.9rem}
+    .period .live{color:var(--ok);font-weight:700}
+    .card .row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+    .card .desc{color:#c2d2e2;font-size:.95rem;line-height:1.4}
+
+    /* Modal */
+    .backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:flex-end}
+    .sheet{width:100%;max-height:85vh;background:#0f1622;border-top-left-radius:16px;border-top-right-radius:16px;border:1px solid #243347;overflow:auto}
+    .sheet .hd{position:sticky;top:0;background:#0f1622;border-bottom:1px solid #243347;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+    .sheet .body{padding:16px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+    /* Pagination */
+    .pagination{display:flex;gap:6px;justify-content:center;margin:20px 0}
+    .page{padding:8px 12px;border-radius:10px;border:1px solid #2b394a;background:#0f1622}
+    .page.active{background:var(--acc);border:0;color:#00131f;font-weight:800}
+
+    /* Empty */
+    .empty{border:1px dashed #2a3a4e;border-radius:16px;padding:24px;text-align:center;color:#adc0d4}
+
+    footer{margin:40px 0 80px;color:#8aa0b8;text-align:center}
+
+    /* Responsive */
+    @media (max-width:1000px){.results{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}}
+    @media (max-width:620px){.filters{grid-template-columns:1fr 1fr}.results{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div class="brand"><span class="dot" aria-hidden="true"></span><span>맞춤형 지원사업 플랫폼</span></div>
+      <div class="actions">
+        <button class="btn ghost small" id="btn-saved" aria-pressed="false">저장함(0)</button>
+        <button class="btn small" id="btn-reset">초기화</button>
+        <button class="btn acc small" id="btn-search">검색</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero container">
+    <h1>당신에게 맞는 지원사업을 한눈에</h1>
+    <p class="muted">키워드와 조건을 선택해 보세요. (샘플 데이터 · 구조화된 JS로 리팩터링)</p>
+
+    <form class="filters" id="filters" autocomplete="off" novalidate>
+      <div class="f" style="grid-column: span 6">
+        <label for="q">키워드</label>
+        <input class="input" id="q" name="q" placeholder="예: 전세자금, 교육, 교통비, 창업" />
+      </div>
+      <div class="f" style="grid-column: span 3">
+        <label for="region">지역</label>
+        <select class="select" id="region" name="region">
+          <option value="">전국</option>
+          <option>서울</option><option>부산</option><option>대구</option><option>인천</option>
+          <option>광주</option><option>대전</option><option>울산</option><option>세종</option>
+          <option>경기</option><option>강원</option><option>충북</option><option>충남</option>
+          <option>전북</option><option>전남</option><option>경북</option><option>경남</option>
+          <option>제주</option>
+        </select>
+      </div>
+      <div class="f" style="grid-column: span 3">
+        <label for="category">분야</label>
+        <select class="select" id="category" name="category">
+          <option value="">전체</option>
+          <option>주거</option><option>일자리</option><option>교육</option><option>금융</option><option>복지</option><option>기타</option>
+        </select>
+      </div>
+      <div class="f" style="grid-column: span 3">
+        <label for="ageMin">나이(만 기준)</label>
+        <div style="display:flex;gap:8px">
+          <input class="input" id="ageMin" name="ageMin" inputmode="numeric" pattern="[0-9]*" min="0" placeholder="최소" />
+          <input class="input" id="ageMax" name="ageMax" inputmode="numeric" pattern="[0-9]*" min="0" placeholder="최대" />
+        </div>
+      </div>
+      <div class="f" style="grid-column: span 3">
+        <label for="income">소득구간</label>
+        <select class="select" id="income" name="income">
+          <option value="">무관</option>
+          <option>중위소득 100% 이하</option>
+          <option>중위소득 150% 이하</option>
+          <option>중위소득 200% 이하</option>
+        </select>
+      </div>
+      <div class="f" style="grid-column: span 3">
+        <label for="employment">고용상태</label>
+        <select class="select" id="employment" name="employment">
+          <option value="">무관</option>
+          <option>재직자</option>
+          <option>구직자</option>
+          <option>프리랜서/자영업</option>
+        </select>
+      </div>
+      <div class="f" style="grid-column: span 3">
+        <label for="deadline">마감여부</label>
+        <select class="select" id="deadline" name="deadline">
+          <option value="open">진행중만</option>
+          <option value="all">전체</option>
+          <option value="closed">마감만</option>
+        </select>
+      </div>
+    </form>
+
+    <div class="chiprow" style="margin-top:12px" id="activeChips" aria-live="polite"></div>
+  </section>
+
+  <section class="container" aria-live="polite">
+    <div class="toolbar">
+      <div id="count" class="muted">검색 결과 0건</div>
+      <div>
+        <label class="sr-only" for="sort">정렬</label>
+        <select class="select" id="sort" name="sort">
+          <option value="relevance">정확도순</option>
+          <option value="deadline">마감 임박순</option>
+          <option value="latest">최신 등록순</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="results" id="results"></div>
+    <div class="empty" id="empty" hidden>조건에 맞는 사업이 없습니다. 필터를 조정해 보세요.</div>
+    <div class="pagination" id="pager"></div>
+  </section>
+
+  <div class="backdrop" id="backdrop" aria-hidden="true">
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+      <div class="hd">
+        <strong id="detailTitle">상세 정보</strong>
+        <button class="btn small" id="closeDetail">닫기</button>
+      </div>
+      <div class="body" id="detailBody"></div>
+    </div>
+  </div>
+
+  <footer class="container">© 2025 맞춤형 지원사업 플랫폼 · 리팩터링 샘플</footer>
+
+  <script type="module">
+    // ==========================
+    // 🔧 Utilities
+    // ==========================
+    const $  = (sel, root=document) => root.querySelector(sel);
+    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+    const clampNum = (n, min, max) => Math.max(min, Math.min(max, n));
+    const parseIntOr = (v, fallback) => {
+      const n = parseInt(String(v).trim(), 10);
+      return Number.isFinite(n) ? n : fallback;
+    };
+    const fmtDate = (s) => new Date(s).toISOString().slice(0,10);
+    const today = () => new Date();
+    const inPeriod = (p) => {
+      const t = today();
+      const s = new Date(p.period.start);
+      const e = new Date(p.period.end);
+      return t >= s && t <= e;
+    };
+    const debounce = (fn, ms=250) => {
+      let id; return (...args)=>{ clearTimeout(id); id=setTimeout(()=>fn(...args), ms); };
+    };
+
+    // ==========================
+    // 💾 Data (mock) — replace with API
+    // ==========================
+    /** @typedef {{id:string,title:string,region:string,category:string,host:string,targets?:string,benefit?:string,period:{start:string,end:string},link:string,contact?:string,tags?:string[],minAge?:number,maxAge?:number,income?:string,employment?:string,updatedAt?:string}} Program */
+    const DATA = /** @type {Program[]} */ ([
+      { id:"P001", title:"청년 월세 한시 특별지원", region:"전국", category:"주거", host:"국토교통부",
+        targets:"만 19~34세 무주택 청년", benefit:"월 최대 20만원, 최대 12개월 지원",
+        period:{ start:"2025-01-01", end:"2025-12-31" }, link:"https://example.com/p1", contact:"국토부 콜센터 120",
+        tags:["월세", "주거", "청년"], minAge:19, maxAge:34, employment:"", income:"중위소득 150% 이하", updatedAt:"2025-02-10" },
+      { id:"P002", title:"지역 청년 교통비 지원", region:"대구", category:"복지", host:"대구광역시",
+        targets:"대구 청년(만 19~34세) 대중교통 이용자", benefit:"월 3만원 모바일 교통카드 지급",
+        period:{ start:"2025-03-01", end:"2025-06-30" }, link:"https://example.com/p2", contact:"대구시 청년정책과",
+        tags:["교통비", "대중교통"], minAge:19, maxAge:34, updatedAt:"2025-03-05" },
+      { id:"P003", title:"청년 취업 성공 패키지(가칭)", region:"경북", category:"일자리", host:"경상북도",
+        targets:"구직 청년", benefit:"취업 역량강화 교육 + 면접비/자격증 비용 지원",
+        period:{ start:"2025-01-15", end:"2025-05-31" }, link:"https://example.com/p3", contact:"경북일자리센터",
+        tags:["취업", "교육", "면접비"], employment:"구직자", updatedAt:"2025-01-20" },
+      { id:"P004", title:"청년 창업 시드 펀드", region:"서울", category:"금융", host:"서울산업진흥원",
+        targets:"예비/초기 창업자", benefit:"시드 투자 최대 5천만원 + 보육 프로그램",
+        period:{ start:"2025-02-01", end:"2025-12-31" }, link:"https://example.com/p4", contact:"SBA",
+        tags:["창업", "투자"], employment:"프리랜서/자영업", updatedAt:"2025-02-12" }
+    ]);
+
+    // ==========================
+    // 🧠 State store
+    // ==========================
+    const Store = (()=>{
+      const LS_KEY = 'smp.saved.v1';
+      const loadSaved = () => new Set(JSON.parse(localStorage.getItem(LS_KEY) || '[]'));
+      const persistSaved = (set) => localStorage.setItem(LS_KEY, JSON.stringify([...set]));
+
+      const state = {
+        page: 1,
+        pageSize: 6,
+        saved: loadSaved(),
+        filters: {
+          q: '', region: '', category: '',
+          ageMin: 0, ageMax: 200,
+          income: '', employment: '',
+          deadline: 'open', sort: 'relevance'
+        }
+      };
+
+      const get = () => structuredClone(state);
+      const set = (patch) => Object.assign(state, patch);
+      const setFilters = (filters) => { state.filters = {...state.filters, ...filters}; };
+      const toggleSave = (id) => {
+        if (state.saved.has(id)) state.saved.delete(id); else state.saved.add(id);
+        persistSaved(state.saved);
+      };
+      const clearFilters = () => {
+        set({ page:1 });
+        setFilters({ q:'', region:'', category:'', ageMin:0, ageMax:200, income:'', employment:'', deadline:'open', sort:'relevance' });
+      };
+
+      return { get, set, setFilters, toggleSave, clearFilters };
+    })();
+
+    // ==========================
+    // 🔎 Filtering & sorting
+    // ==========================
+    function collectFiltersFromUI(){
+      const q  = $('#q').value.trim().toLowerCase();
+      const region = $('#region').value;
+      const category = $('#category').value;
+      const ageMin = parseIntOr($('#ageMin').value || '0', 0);
+      const ageMax = parseIntOr($('#ageMax').value || '200', 200);
+      const income = $('#income').value;
+      const employment = $('#employment').value;
+      const deadline = $('#deadline').value || 'open';
+      const sort = $('#sort').value || 'relevance';
+      return { q, region, category, ageMin, ageMax, income, employment, deadline, sort };
+    }
+
+    /** @param {Program[]} all */
+    function applyFilters(all){
+      const f = Store.get().filters;
+      let list = all.slice();
+
+      if (f.q) {
+        const q = f.q;
+        list = list.filter(p => (
+          (p.title+" "+(p.targets||'')+" "+(p.benefit||'')+" "+(p.tags||[]).join(' ')+" "+(p.host||''))
+            .toLowerCase().includes(q)
+        ));
+      }
+      if (f.region) list = list.filter(p => p.region === f.region || p.region === '전국');
+      if (f.category) list = list.filter(p => p.category === f.category);
+
+      list = list.filter(p => {
+        const min = p.minAge ?? 0; const max = p.maxAge ?? 200;
+        return f.ageMax >= min && f.ageMin <= max;
+      });
+      if (f.income) list = list.filter(p => !p.income || p.income === f.income);
+      if (f.employment) list = list.filter(p => (p.employment||'') === f.employment);
+      if (f.deadline === 'open') list = list.filter(inPeriod);
+      if (f.deadline === 'closed') list = list.filter(p => !inPeriod(p));
+
+      if (f.sort === 'deadline') {
+        list.sort((a,b)=> new Date(a.period.end) - new Date(b.period.end));
+      } else if (f.sort === 'latest') {
+        list.sort((a,b)=> new Date(b.updatedAt||b.period.start) - new Date(a.updatedAt||a.period.start));
+      }
+      // relevance: keep original order for now
+      return list;
+    }
+
+    function paginate(list){
+      const { page, pageSize } = Store.get();
+      const start = (page-1)*pageSize;
+      return list.slice(start, start+pageSize);
+    }
+
+    // ==========================
+    // 🖼️ Rendering
+    // ==========================
+    function renderChips(){
+      const f = Store.get().filters;
+      const host = $('#activeChips');
+      host.innerHTML = '';
+      const add = (label,val) => { if(val){ const el=document.createElement('span'); el.className='chip'; el.textContent=label+': '+val; host.appendChild(el);} };
+      add('지역', f.region||'전국');
+      add('분야', f.category||'전체');
+      if(f.q) add('키워드', f.q);
+      if(f.ageMin!==0 || f.ageMax!==200) add('나이', `${f.ageMin}~${f.ageMax===200?'무한':f.ageMax}`);
+      if(f.income) add('소득', f.income);
+      if(f.employment) add('고용', f.employment);
+      add('마감', {open:'진행중만', all:'전체', closed:'마감만'}[f.deadline]);
+    }
+
+    /** @param {Program[]} list */
+    function renderList(list){
+      $('#count').textContent = `검색 결과 ${list.length}건`;
+      const host = $('#results');
+      host.innerHTML = '';
+      const pageList = paginate(list);
+
+      if (!pageList.length){
+        $('#empty').hidden = false;
+        $('#pager').innerHTML='';
+        return;
+      }
+      $('#empty').hidden = true;
+
+      const saved = Store.get().saved;
+      const frag = document.createDocumentFragment();
+
+      for (const p of pageList){
+        const live = inPeriod(p);
+        const article = document.createElement('article');
+        article.className = 'card';
+        article.innerHTML = `
+          <div class="row"><div class="badge">${p.region}</div><div class="badge">${p.category}</div></div>
+          <div class="title">${p.title}</div>
+          <div class="muted">${p.host||''}</div>
+          <div class="desc">${p.benefit||''}</div>
+          <div class="muted">대상: ${p.targets||'-'}${p.income? ' · '+p.income:''}</div>
+          <div class="period">신청기간: ${fmtDate(p.period.start)} ~ ${fmtDate(p.period.end)} ${live? '<span class="live">● 진행중</span>':'<span style="color:#9aa8bb">마감</span>'}</div>
+          <div class="badges">${(p.tags||[]).map(t=>`<span class="badge">#${t}</span>`).join('')}</div>
+          <div class="row">
+            <div style="display:flex;gap:8px">
+              <button class="btn small" data-act="detail" data-id="${p.id}">자세히</button>
+              <a class="btn small ghost" href="${p.link}" target="_blank" rel="noopener">공식 사이트</a>
+            </div>
+            <button class="btn small ${saved.has(p.id)? 'acc':''}" data-act="save" data-id="${p.id}">${saved.has(p.id)? '저장됨★':'저장'}</button>
+          </div>
+        `;
+        frag.appendChild(article);
+      }
+      host.appendChild(frag);
+
+      renderPager(list.length);
+    }
+
+    function renderPager(total){
+      const { pageSize, page } = Store.get();
+      const pages = Math.max(1, Math.ceil(total / pageSize));
+      const pager = $('#pager');
+      pager.innerHTML = '';
+      const frag = document.createDocumentFragment();
+
+      for (let i=1;i<=pages;i++){
+        const btn=document.createElement('button');
+        btn.type='button';
+        btn.className='page'+(i===page?' active':'');
+        btn.textContent=String(i);
+        btn.dataset.page = String(i);
+        frag.appendChild(btn);
+      }
+      pager.appendChild(frag);
+    }
+
+    function openDetail(id){
+      const p = DATA.find(x=>x.id===id); if(!p) return;
+      $('#detailTitle').textContent = p.title;
+      $('#detailBody').innerHTML = `
+        <div class="grid">
+          <div>
+            <h3>개요</h3>
+            <p class="muted">주관: ${p.host || '-'}</p>
+            <p>대상: ${p.targets || '-'}</p>
+            <p>분야/지역: ${p.category} · ${p.region}</p>
+            <p>신청기간: ${fmtDate(p.period.start)} ~ ${fmtDate(p.period.end)} ${inPeriod(p)? '<span class="live">진행중</span>':'<span style="color:#9aa8bb">마감</span>'}</p>
+          </div>
+          <div>
+            <h3>지원 내용</h3>
+            <p>${p.benefit || '-'}</p>
+            <div class="chiprow" style="margin-top:8px">${(p.tags||[]).map(t=>`<span class='chip'>#${t}</span>`).join('')}</div>
+          </div>
+        </div>
+        <hr style="border-color:#203045;opacity:.4;margin:16px 0">
+        <p><strong>신청/안내:</strong> <a href="${p.link}" target="_blank" rel="noopener">공식 페이지</a></p>
+        <p><strong>문의:</strong> ${p.contact || '-'}</p>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn acc" data-act="save" data-id="${p.id}">${Store.get().saved.has(p.id)? '저장됨★':'저장'}</button>
+          <button class="btn ghost" data-act="copy" data-url="${p.link}">링크 복사</button>
+        </div>
+      `;
+      $('#backdrop').style.display='flex';
+      $('#backdrop').setAttribute('aria-hidden','false');
+    }
+    function closeDetail(){
+      $('#backdrop').style.display='none';
+      $('#backdrop').setAttribute('aria-hidden','true');
+    }
+
+    // ==========================
+    // 🔗 URL sync (optional)
+    // ==========================
+    function syncToURL(){
+      const f = Store.get().filters;
+      const usp = new URLSearchParams();
+      Object.entries(f).forEach(([k,v])=>{ if(v!=='' && v!==null && v!==undefined && !(k==='ageMin' && v===0) && !(k==='ageMax' && v===200)) usp.set(k, String(v)); });
+      usp.set('page', String(Store.get().page));
+      history.replaceState(null, '', `${location.pathname}?${usp.toString()}`);
+    }
+    function initFromURL(){
+      const usp = new URLSearchParams(location.search);
+      const f = {
+        q: usp.get('q')||'',
+        region: usp.get('region')||'',
+        category: usp.get('category')||'',
+        ageMin: parseIntOr(usp.get('ageMin'), 0),
+        ageMax: parseIntOr(usp.get('ageMax'), 200),
+        income: usp.get('income')||'',
+        employment: usp.get('employment')||'',
+        deadline: usp.get('deadline')||'open',
+        sort: usp.get('sort')||'relevance',
+      };
+      const page = parseIntOr(usp.get('page'), 1);
+      Store.set({ page: clampNum(page,1,999) });
+      Store.setFilters(f);
+
+      // Reflect to UI
+      $('#q').value=f.q; $('#region').value=f.region; $('#category').value=f.category;
+      $('#ageMin').value = f.ageMin ? String(f.ageMin) : '';
+      $('#ageMax').value = f.ageMax!==200 ? String(f.ageMax) : '';
+      $('#income').value=f.income; $('#employment').value=f.employment; $('#deadline').value=f.deadline; $('#sort').value=f.sort;
+    }
+
+    // ==========================
+    // 🎛️ Event wiring
+    // ==========================
+    function bindEvents(){
+      // Search / reset
+      $('#btn-search').addEventListener('click', ()=>{ Store.set({ page:1 }); update(); });
+      $('#btn-reset').addEventListener('click', ()=>{ Store.clearFilters(); reflectUIFromStore(); update(); });
+
+      // Saved view
+      $('#btn-saved').addEventListener('click', ()=>{
+        const saved = DATA.filter(m=>Store.get().saved.has(m.id));
+        $('#results').innerHTML='';
+        renderList(saved);
+        $('#count').textContent = `저장한 항목 ${saved.length}건`;
+        $('#pager').innerHTML='';
+        const pressed = $('#btn-saved').getAttribute('aria-pressed') === 'true';
+        $('#btn-saved').setAttribute('aria-pressed', String(!pressed));
+      });
+
+      // Debounced change handlers on form inputs
+      const onFilterChange = debounce(()=>{ Store.set({ page:1 }); Store.setFilters(collectFiltersFromUI()); update(); }, 200);
+      $$('#filters input, #filters select, #sort').forEach(el=>{
+        el.addEventListener('input', onFilterChange);
+        el.addEventListener('change', onFilterChange);
+      });
+
+      // Results delegation
+      $('#results').addEventListener('click', (e)=>{
+        const btn = e.target.closest('button'); if(!btn) return;
+        const id = btn.dataset.id;
+        const act = btn.dataset.act;
+        if (act==='detail') openDetail(id);
+        if (act==='save') { Store.toggleSave(id); update(); }
+      });
+
+      // Pager
+      $('#pager').addEventListener('click', (e)=>{
+        const btn = e.target.closest('button.page'); if(!btn) return;
+        const to = parseInt(btn.dataset.page,10);
+        Store.set({ page: to }); update(false); window.scrollTo({top:0,behavior:'smooth'});
+      });
+
+      // Modal
+      $('#closeDetail').addEventListener('click', closeDetail);
+      $('#backdrop').addEventListener('click', (e)=>{ if(e.target.id==='backdrop') closeDetail(); });
+      $('#detailBody').addEventListener('click', async (e)=>{
+        const btn = e.target.closest('button'); if(!btn) return;
+        if (btn.dataset.act==='save') { Store.toggleSave(btn.dataset.id); update(false); openDetail(btn.dataset.id); }
+        if (btn.dataset.act==='copy') { try{ await navigator.clipboard.writeText(btn.dataset.url); alert('링크 복사됨'); } catch { alert('복사 실패'); } }
+      });
+    }
+
+    function reflectUIFromStore(){
+      const f = Store.get().filters;
+      $('#q').value=f.q; $('#region').value=f.region; $('#category').value=f.category;
+      $('#ageMin').value = f.ageMin ? String(f.ageMin) : '';
+      $('#ageMax').value = f.ageMax!==200 ? String(f.ageMax) : '';
+      $('#income').value=f.income; $('#employment').value=f.employment; $('#deadline').value=f.deadline; $('#sort').value=f.sort;
+    }
+
+    // ==========================
+    // 🔁 Main update loop
+    // ==========================
+    function update(syncUrl=true){
+      const filtered = applyFilters(DATA);
+      renderChips();
+      renderList(filtered);
+      $('#btn-saved').textContent = `저장함(${Store.get().saved.size})`;
+      if (syncUrl) syncToURL();
+    }
+
+    // ==========================
+    // 🚀 Init
+    // ==========================
+    initFromURL();
+    bindEvents();
+    update();
+
+    // ==========================
+    // 📌 API Hook (Replace later)
+    //  - applyFilters() 자리에 쿼리스트링 구성 후 /search API 호출
+    //  - page, pageSize, sort 포함
+    //  - 응답을 Program[] 스키마에 매핑
+    // ==========================
+  </script>
+</body>
+</html>
