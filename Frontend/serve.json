@@ -1,6 +1,6 @@
 {
-  "redirects": [
-    { "source": "/", "destination": "/Support-matching-prototype-refactor.html", "statusCode": 302 }
+  "public": "./",
+  "rewrites": [
+    { "source": "**", "destination": "/Spmc-prpe.html" }
   ]
 }
-

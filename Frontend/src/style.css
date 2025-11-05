@@ -1,0 +1,51 @@
+:root{
+  --bg:#0b0f14; --panel:#121821; --text:#e8eef5; --muted:#8ca0b3; --acc:#5cc8ff;
+  --card:#0f151e; --border:#1f2a38; --ok:#40d1a7; --danger:#ff6b6b;
+}
+*{box-sizing:border-box} html,body{height:100%}
+body{
+  margin:0; background:linear-gradient(180deg,#0b0f14 0%,#0e141d 100%);
+  color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Malgun Gothic,Arial,sans-serif;
+}
+a{color:var(--acc)} .muted{color:var(--muted)}
+
+.container{max-width:1100px;margin:0 auto;padding:20px}
+.header{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:14px}
+.brand{font-weight:700}
+
+.search{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.search input,.search select{
+  background:#0f151e;border:1px solid var(--border); color:var(--text);
+  padding:10px 12px;border-radius:10px; outline:none; min-width:140px;
+}
+.search .span-2{grid-column:span 2}
+
+.actions{display:flex;gap:8px;align-items:center}
+.btn{
+  background:var(--acc); color:#001018; border:0; padding:10px 14px; border-radius:10px; font-weight:700; cursor:pointer;
+}
+.btn.secondary{background:#18202b;color:var(--text);border:1px solid var(--border)}
+.btn.ghost{background:transparent;border:1px solid var(--border);color:var(--text)}
+
+.panel{
+  background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:16px;
+}
+.toolbar{display:flex;justify-content:space-between;align-items:center;margin:6px 0 12px 0}
+.sort{display:flex;gap:8px;align-items:center}
+.sort select{background:#0f151e;border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:10px}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.card{
+  background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px;
+}
+.card h4{margin:0 0 8px 0;font-size:16px}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.badge{font-size:12px;border:1px solid var(--border);padding:4px 8px;border-radius:999px;color:var(--muted)}
+.badge.green{color:var(--ok);border-color:#21483d;background:#0b1b16}
+.badge.gray{opacity:.8}
+.card .row{display:flex;gap:10px;margin-top:10px}
+.card .row .btn{padding:8px 12px;border-radius:10px;font-weight:600}
+
+.count{color:var(--muted);font-size:14px}
+.footer{opacity:.7;margin-top:18px;font-size:12px;text-align:center}
+.saved-pill{font-size:12px;padding:6px 10px;border-radius:999px;background:#1a2330;border:1px solid var(--border)}
