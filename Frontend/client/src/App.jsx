@@ -1,33 +1,24 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <header className="topbar">
+        <div className="topbar__title">맞춤형 지원사업 플랫폼</div>
+        <div className="topbar__actions">
+          <button type="button" className="btn btn-ghost" id="resetBtn">초기화</button>
+          <button type="button" className="btn btn-primary" id="searchBtn">검색</button>
+        </div>
+      </header>
+      <main>
+        <div className="filters">
+          {/* 필터 컴포넌트들이 여기에 들어갈 예정 */}
+        </div>
+        <div className="results">
+          {/* 결과 목록이 여기에 표시될 예정 */}
+        </div>
+      </main>
     </>
   )
 }
