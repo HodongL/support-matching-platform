@@ -1,59 +1,243 @@
 <!doctype html>
 <html lang="ko">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>맞춤형 지원사업 플랫폼 · Starter</title>
   <style>
-    :root{
-      --bg:#0b0f14; --panel:#121821; --muted:#8ca0b3; --text:#e8eef5; --acc:#5cc8ff; --chip:#1b2330; --ok:#40d1a7; --warn:#ffd166;
+    :root {
+      --bg: #0b0f14;
+      --panel: #121821;
+      --muted: #8ca0b3;
+      --text: #e8eef5;
+      --acc: #5cc8ff;
+      --chip: #1b2330;
+      --ok: #40d1a7;
+      --warn: #ffd166;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,Malgun Gothic,Arial,sans-serif;background:linear-gradient(180deg,#0b0f14 0%,#0e141d 100%);color:var(--text)}
-    a{color:var(--acc);text-decoration:none}
-    .container{max-width:12
-      00px;margin:0 auto;padding:24px}
-    header{position:sticky;top:0;z-index:50;background:rgba(11,15,20,.85);backdrop-filter:blur(8px);border-bottom:1px solid #1e293b}
-    .nav{display:flex;align-items:center;gap:16px;justify-content:space-between;padding:12px 24px}
-    .brand{display:flex;align-items:center;gap:10px;font-weight:700}
-    .brand .dot{width:10px;height:10px;border-radius:50%;background:var(--acc);box-shadow:0 0 20px #38bdf8}
-    .actions{display:flex;gap:10px}
-    .btn{border:1px solid #2b394a;background:#0f1622;color:var(--text);padding:10px 14px;border-radius:12px;font-weight:600;cursor:pointer}
-    .btn.acc{background:linear-gradient(90deg,#2aa1ff,#6ee7ff);color:#00131f;border:0}
-    .btn.ghost{background:#0f162200;border:1px solid #2b394a}
-    .btn.small{padding:6px 10px;font-size:.9rem;border-radius:10px}
-    .btn:disabled{opacity:.6;cursor:not-allowed}
-    .hero{padding:28px 24px 8px;border-bottom:1px solid #1e293b}
-    .hero h1{margin:0 0 6px;font-size:28px}
-    .muted{color:var(--muted)}
+
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      height: 100%
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Apple SD Gothic Neo, Malgun Gothic, Arial, sans-serif;
+      background: linear-gradient(180deg, #0b0f14 0%, #0e141d 100%);
+      color: var(--text)
+    }
+
+    a {
+      color: var(--acc);
+      text-decoration: none
+    }
+
+    .container {
+      max-width: 12 00px;
+      margin: 0 auto;
+      padding: 24px
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(11, 15, 20, .85);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #1e293b
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      justify-content: space-between;
+      padding: 12px 24px
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700
+    }
+
+    .brand .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--acc);
+      box-shadow: 0 0 20px #38bdf8
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px
+    }
+
+    .btn {
+      border: 1px solid #2b394a;
+      background: #0f1622;
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer
+    }
+
+    .btn.acc {
+      background: linear-gradient(90deg, #2aa1ff, #6ee7ff);
+      color: #00131f;
+      border: 0
+    }
+
+    .btn.ghost {
+      background: #0f162200;
+      border: 1px solid #2b394a
+    }
+
+    .btn.small {
+      padding: 6px 10px;
+      font-size: .9rem;
+      border-radius: 10px
+    }
+
+    .btn:disabled {
+      opacity: .6;
+      cursor: not-allowed
+    }
+
+    .hero {
+      padding: 28px 24px 8px;
+      border-bottom: 1px solid #1e293b
+    }
+
+    .hero h1 {
+      margin: 0 0 6px;
+      font-size: 28px
+    }
+
+    .muted {
+      color: var(--muted)
+    }
 
     /* Filters */
-    .filters{background:var(--panel);border:1px solid #1f2a3a;border-radius:16px;padding:16px;display:grid;grid-template-columns:repeat(12,1fr);gap:12px;margin-top:16px}
-    .f{display:flex;flex-direction:column;gap:8px}
-    .f label{font-size:.9rem;color:#b6c5d6}
-    .input,.select{background:#0f1622;border:1px solid #233041;color:var(--text);padding:10px 12px;border-radius:12px;width:100%}
-    .chiprow{display:flex;gap:8px;flex-wrap:wrap}
-    .chip{background:var(--chip);border:1px solid #253244;color:#c6d5e5;padding:6px 10px;border-radius:9999px;font-size:.85rem}
+    .filters {
+      background: var(--panel);
+      border: 1px solid #1f2a3a;
+      border-radius: 16px;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 12px;
+      margin-top: 16px
+    }
+
+    .f {
+      display: flex;
+      flex-direction: column;
+      gap: 8px
+    }
+
+    .f label {
+      font-size: .9rem;
+      color: #b6c5d6
+    }
+
+    .input,
+    .select {
+      background: #0f1622;
+      border: 1px solid #233041;
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      width: 100%
+    }
+
+    .chiprow {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+
+    .chip {
+      background: var(--chip);
+      border: 1px solid #253244;
+      color: #c6d5e5;
+      padding: 6px 10px;
+      border-radius: 9999px;
+      font-size: .85rem
+    }
 
     /* Results */
-    .toolbar{display:flex;align-items:center;justify-content:space-between;margin:18px 0}
-    .results{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-    .card{background:var(--panel);border:1px solid #1f2a3a;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px}
-    .title{font-weight:700;font-size:1.05rem}
-    .badges{display:flex;gap:8px;flex-wrap:wrap}
-    .badge{background:#0e1520;border:1px solid #273445;color:#9ec7ff;padding:4px 8px;border-radius:10px;font-size:.78rem}
-    .badge.clickable{
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 18px 0
+    }
+
+    .results {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid #1f2a3a;
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px
+    }
+
+    .title {
+      font-weight: 700;
+      font-size: 1.05rem
+    }
+
+    .badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+
+    .badge {
+      background: #0e1520;
+      border: 1px solid #273445;
+      color: #9ec7ff;
+      padding: 4px 8px;
+      border-radius: 10px;
+      font-size: .78rem
+    }
+
+    .badge.clickable {
       cursor: pointer;
       transition: all 0.2s ease;
     }
-    .badge.clickable:hover{
-      background:#1a2735;
-      border-color:#3d4d65;
+
+    .badge.clickable:hover {
+      background: #1a2735;
+      border-color: #3d4d65;
       transform: translateY(-1px);
     }
-    .period{font-size:.9rem}
-    .period .live{color:var(--ok);font-weight:700}
+
+    .period {
+      font-size: .9rem
+    }
+
+    .period .live {
+      color: var(--ok);
+      font-weight: 700
+    }
 
     /* 자동완성 스타일 */
     .autocomplete-items {
@@ -68,28 +252,33 @@
       margin-top: 4px;
       max-height: 300px;
       overflow-y: auto;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
+
     .autocomplete-item {
       padding: 10px 14px;
       cursor: pointer;
       border-bottom: 1px solid var(--border);
     }
+
     .autocomplete-item:last-child {
       border-bottom: none;
     }
+
     .autocomplete-item:hover {
       background: #1a2330;
     }
+
     .autocomplete-item.selected {
       background: #1e293b;
     }
+
     .autocomplete-item mark {
       background: transparent;
       color: var(--acc);
       font-weight: 600;
     }
-    
+
     /* 인기 태그 스타일 */
     .popular-tag {
       display: inline-flex;
@@ -103,23 +292,37 @@
       cursor: pointer;
       transition: all 0.2s ease;
     }
+
     .popular-tag:hover {
       background: #243040;
       transform: translateY(-1px);
     }
+
     .popular-tag .count {
       font-size: 0.8rem;
       color: var(--muted);
     }
-    .card .row{display:flex;justify-content:space-between;align-items:center;gap:10px}
-    .card .desc{color:#c2d2e2;font-size:.95rem;line-height:1.4}
+
+    .card .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px
+    }
+
+    .card .desc {
+      color: #c2d2e2;
+      font-size: .95rem;
+      line-height: 1.4
+    }
 
     /* Sidebar */
-    .layout{
+    .layout {
       display: flex;
       min-height: 100vh;
     }
-    .sidebar{
+
+    .sidebar {
       width: 280px;
       background: var(--panel);
       border-right: 1px solid #1f2a3a;
@@ -129,19 +332,23 @@
       padding: 20px;
       overflow-y: auto;
     }
-    .sidebar h3{
+
+    .sidebar h3 {
       font-size: 1rem;
       color: #adc0d4;
       margin: 0 0 12px;
     }
-    .sidebar-section{
+
+    .sidebar-section {
       padding: 16px 0;
       border-bottom: 1px solid #1f2a3a;
     }
-    .sidebar-section:last-child{
+
+    .sidebar-section:last-child {
       border: 0;
     }
-    .menu-item{
+
+    .menu-item {
       display: flex;
       align-items: center;
       gap: 12px;
@@ -151,64 +358,163 @@
       cursor: pointer;
       transition: 0.2s;
     }
-    .menu-item:hover{
+
+    .menu-item:hover {
       background: #1b2330;
     }
-    .menu-item.active{
+
+    .menu-item.active {
       background: #1e293b;
     }
-    .menu-item .count{
+
+    .menu-item .count {
       margin-left: auto;
       font-size: 0.85rem;
       color: var(--muted);
     }
-    .recent-item{
+
+    .recent-item {
       background: #0f1622;
       border: 1px solid #1f2a3a;
       border-radius: 12px;
       padding: 12px;
       margin-bottom: 8px;
     }
-    .recent-item .title{
+
+    .recent-item .title {
       font-size: 0.9rem;
       margin-bottom: 4px;
     }
-    .recent-item .meta{
+
+    .recent-item .meta {
       color: var(--muted);
       font-size: 0.8rem;
     }
-    .main-content{
+
+    .main-content {
       flex: 1;
       min-width: 0;
     }
-    @media (max-width: 1000px){
-      .sidebar{
+
+    @media (max-width: 1000px) {
+      .sidebar {
         display: none;
       }
     }
 
     /* Modal */
-    .backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:flex-end}
-    .sheet{width:100%;max-height:85vh;background:#0f1622;border-top-left-radius:16px;border-top-right-radius:16px;border:1px solid #243347;overflow:auto}
-    .sheet .hd{position:sticky;top:0;background:#0f1622;border-bottom:1px solid #243347;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
-    .sheet .body{padding:16px}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .6);
+      display: none;
+      align-items: flex-end
+    }
+
+    .sheet {
+      width: 100%;
+      max-height: 85vh;
+      background: #0f1622;
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
+      border: 1px solid #243347;
+      overflow: auto
+    }
+
+    .sheet .hd {
+      position: sticky;
+      top: 0;
+      background: #0f1622;
+      border-bottom: 1px solid #243347;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center
+    }
+
+    .sheet .body {
+      padding: 16px
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px
+    }
 
     /* Pagination */
-    .pagination{display:flex;gap:6px;justify-content:center;margin:20px 0}
-    .page{padding:8px 12px;border-radius:10px;border:1px solid #2b394a;background:#0f1622}
-    .page.active{background:var(--acc);border:0;color:#00131f;font-weight:800}
+    .pagination {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      margin: 20px 0
+    }
+
+    .page {
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid #2b394a;
+      background: #0f1622
+    }
+
+    .page.active {
+      background: var(--acc);
+      border: 0;
+      color: #00131f;
+      font-weight: 800
+    }
 
     /* Empty */
-    .empty{border:1px dashed #2a3a4e;border-radius:16px;padding:24px;text-align:center;color:#adc0d4}
+    .empty {
+      border: 1px dashed #2a3a4e;
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      color: #adc0d4
+    }
 
-    footer{margin:40px 0 80px;color:#8aa0b8;text-align:center}
+    footer {
+      margin: 40px 0 80px;
+      color: #8aa0b8;
+      text-align: center
+    }
 
     /* Responsive */
-    @media (max-width:1000px){.results{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}}
-    @media (max-width:620px){.filters{grid-template-columns:1fr 1fr}.results{grid-template-columns:1fr}}
+    @media (max-width:1000px) {
+      .results {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .grid {
+        grid-template-columns: 1fr
+      }
+    }
+
+    @media (max-width:620px) {
+      .filters {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .results {
+        grid-template-columns: 1fr
+      }
+    }
+    /* === 로그인 버튼/메뉴 추가 스타일 === */
+.auth{ position: relative; }
+.auth-menu{
+  position:absolute; right:0; top:42px; min-width:160px; display:none;
+  background:var(--panel); border:1px solid #1f2a3a; border-radius:12px; padding:8px;
+  box-shadow:0 10px 30px rgba(0,0,0,.35); z-index:60;
+}
+.auth-menu a, .auth-menu button{
+  display:block; width:100%; text-align:left; padding:8px 10px; border-radius:8px;
+  background:transparent; color:var(--text); border:none; cursor:pointer;
+}
+.auth-menu a:hover, .auth-menu button:hover{ background:#1b2330; }
+
   </style>
 </head>
+
 <body>
   <header>
     <div class="nav">
@@ -217,6 +523,13 @@
         <button class="btn ghost small" id="btn-saved">저장함(0)</button>
         <button class="btn small" id="btn-reset">초기화</button>
         <button class="btn acc small" id="btn-search">검색</button>
+        <div class="auth"> <!--로그인 버튼 추가-->
+          <button class="btn ghost small" id="authBtn">로그인</button>
+          <div id="authMenu" class="auth-menu">
+            <a id="myPageLink" href="mypage.html" style="display:none">마이페이지</a>
+            <button id="logoutBtn" type="button" style="display:none">로그아웃</button>
+          </div>
+        </div>
       </div>
     </div>
   </header>
@@ -283,130 +596,148 @@
 
     <div class="main-content">
       <section class="hero container">
-    <h1>당신에게 맞는 지원사업을 한눈에</h1>
-    <p class="muted">키워드와 조건을 선택해 보세요.</p>
+        <h1>당신에게 맞는 지원사업을 한눈에</h1>
+        <p class="muted">키워드와 조건을 선택해 보세요.</p>
 
-    <!-- 인기 태그 영역 -->
-    <div style="margin-bottom:16px">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
-        <div style="font-weight:600;color:#adc0d4">인기 검색</div>
-        <div class="chiprow" id="popularTags"></div>
-      </div>
-    </div>
+        <!-- 인기 태그 영역 -->
+        <div style="margin-bottom:16px">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+            <div style="font-weight:600;color:#adc0d4">인기 검색</div>
+            <div class="chiprow" id="popularTags"></div>
+          </div>
+        </div>
 
-    <div class="filters" id="filters">
-      <div class="f" style="grid-column: span 6">
-        <label for="q">키워드</label>
-        <div style="position:relative">
-          <input class="input" id="q" placeholder="예: 전세자금, 교육, 교통비, 창업" />
-          <div id="autocomplete" class="autocomplete-items" style="display:none"></div>
+        <div class="filters" id="filters">
+          <div class="f" style="grid-column: span 6">
+            <label for="q">키워드</label>
+            <div style="position:relative">
+              <input class="input" id="q" placeholder="예: 전세자금, 교육, 교통비, 창업" />
+              <div id="autocomplete" class="autocomplete-items" style="display:none"></div>
+            </div>
+          </div>
+          <div class="f" style="grid-column: span 3">
+            <label>지역</label>
+            <select class="select" id="region">
+              <option value="">전국</option>
+              <option>서울</option>
+              <option>부산</option>
+              <option>대구</option>
+              <option>인천</option>
+              <option>광주</option>
+              <option>대전</option>
+              <option>울산</option>
+              <option>세종</option>
+              <option>경기</option>
+              <option>강원</option>
+              <option>충북</option>
+              <option>충남</option>
+              <option>전북</option>
+              <option>전남</option>
+              <option>경북</option>
+              <option>경남</option>
+              <option>제주</option>
+            </select>
+          </div>
+          <div class="f" style="grid-column: span 3">
+            <label>분야</label>
+            <select class="select" id="category">
+              <option value="">전체</option>
+              <option>주거</option>
+              <option>일자리</option>
+              <option>교육</option>
+              <option>금융</option>
+              <option>복지</option>
+              <option>기타</option>
+            </select>
+          </div>
+          <div class="f" style="grid-column: span 3">
+            <label>나이(만 기준)</label>
+            <div style="display:flex;gap:8px">
+              <input class="input" id="ageMin" type="number" min="0" placeholder="최소" />
+              <input class="input" id="ageMax" type="number" min="0" placeholder="최대" />
+            </div>
+          </div>
+          <div class="f" style="grid-column: span 3">
+            <label>소득구간</label>
+            <select class="select" id="income">
+              <option value="">무관</option>
+              <option>중위소득 100% 이하</option>
+              <option>중위소득 150% 이하</option>
+              <option>중위소득 200% 이하</option>
+            </select>
+          </div>
+          <div class="f" style="grid-column: span 3">
+            <label>고용상태</label>
+            <select class="select" id="employment">
+              <option value="">무관</option>
+              <option>재직자</option>
+              <option>구직자</option>
+              <option>프리랜서/자영업</option>
+            </select>
+          </div>
+          <div class="f" style="grid-column: span 3">
+            <label>마감여부</label>
+            <select class="select" id="deadline">
+              <option value="open">진행중만</option>
+              <option value="all">전체</option>
+              <option value="closed">마감만</option>
+            </select>
+          </div>
+          <!-- 추가 필터: 성별, 재산, 관심분야, 조건 저장 -->
+          <div class="f" style="grid-column: span 3">
+            <label>성별</label>
+            <select class="select" id="sex">
+              <option value="">무관</option>
+              <option value="male">남</option>
+              <option value="female">여</option>
+            </select>
+          </div>
+          <div class="f" style="grid-column: span 3">
+            <label>재산(원)</label>
+            <input class="input" id="asset" type="number" min="0" placeholder="예: 1000000" />
+          </div>
+          <div class="f" style="grid-column: span 6">
+            <label>관심분야 (쉼표로 구분)</label>
+            <input class="input" id="interests" placeholder="예: 창업, 주거, 교육" />
+          </div>
+          <div class="f" style="grid-column: span 12; display:flex; gap:8px; align-items:center; margin-top:4px;">
+            <button class="btn small" id="btn-save-condition">조건 저장</button>
+            <button class="btn small ghost" id="btn-load-condition">내 조건 불러오기</button>
+            <button class="btn small ghost" id="btn-clear-condition">조건 삭제</button>
+            <div style="margin-left:auto;color:var(--muted);font-size:0.9rem">저장된 조건: <span id="savedLabel">없음</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="chiprow" style="margin-top:12px" id="activeChips"></div>
+      </section>
+
+      <section class="container">
+        <div class="toolbar">
+          <div id="count" class="muted">검색 결과 0건</div>
+          <div>
+            <select class="select" id="sort">
+              <option value="relevance">정확도순</option>
+              <option value="deadline">마감 임박순</option>
+              <option value="latest">최신 등록순</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="results" id="results"></div>
+        <div class="empty" id="empty" style="display:none">조건에 맞는 사업이 없습니다. 필터를 조정해 보세요.</div>
+        <div class="pagination" id="pager"></div>
+      </section>
+
+      <div class="backdrop" id="backdrop" aria-hidden="true">
+        <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+          <div class="hd">
+            <strong id="detailTitle">상세 정보</strong>
+            <button class="btn small" id="closeDetail">닫기</button>
+          </div>
+          <div class="body" id="detailBody"></div>
         </div>
       </div>
-      <div class="f" style="grid-column: span 3">
-        <label>지역</label>
-        <select class="select" id="region">
-          <option value="">전국</option>
-          <option>서울</option><option>부산</option><option>대구</option><option>인천</option>
-          <option>광주</option><option>대전</option><option>울산</option><option>세종</option>
-          <option>경기</option><option>강원</option><option>충북</option><option>충남</option>
-          <option>전북</option><option>전남</option><option>경북</option><option>경남</option>
-          <option>제주</option>
-        </select>
-      </div>
-      <div class="f" style="grid-column: span 3">
-        <label>분야</label>
-        <select class="select" id="category">
-          <option value="">전체</option>
-          <option>주거</option><option>일자리</option><option>교육</option><option>금융</option><option>복지</option><option>기타</option>
-        </select>
-      </div>
-      <div class="f" style="grid-column: span 3">
-        <label>나이(만 기준)</label>
-        <div style="display:flex;gap:8px">
-          <input class="input" id="ageMin" type="number" min="0" placeholder="최소" />
-          <input class="input" id="ageMax" type="number" min="0" placeholder="최대" />
-        </div>
-      </div>
-      <div class="f" style="grid-column: span 3">
-        <label>소득구간</label>
-        <select class="select" id="income">
-          <option value="">무관</option>
-          <option>중위소득 100% 이하</option>
-          <option>중위소득 150% 이하</option>
-          <option>중위소득 200% 이하</option>
-        </select>
-      </div>
-      <div class="f" style="grid-column: span 3">
-        <label>고용상태</label>
-        <select class="select" id="employment">
-          <option value="">무관</option>
-          <option>재직자</option>
-          <option>구직자</option>
-          <option>프리랜서/자영업</option>
-        </select>
-      </div>
-      <div class="f" style="grid-column: span 3">
-        <label>마감여부</label>
-        <select class="select" id="deadline">
-          <option value="open">진행중만</option>
-          <option value="all">전체</option>
-          <option value="closed">마감만</option>
-        </select>
-      </div>
-      <!-- 추가 필터: 성별, 재산, 관심분야, 조건 저장 -->
-      <div class="f" style="grid-column: span 3">
-        <label>성별</label>
-        <select class="select" id="sex">
-          <option value="">무관</option>
-          <option value="male">남</option>
-          <option value="female">여</option>
-        </select>
-      </div>
-      <div class="f" style="grid-column: span 3">
-        <label>재산(원)</label>
-        <input class="input" id="asset" type="number" min="0" placeholder="예: 1000000" />
-      </div>
-      <div class="f" style="grid-column: span 6">
-        <label>관심분야 (쉼표로 구분)</label>
-        <input class="input" id="interests" placeholder="예: 창업, 주거, 교육" />
-      </div>
-      <div class="f" style="grid-column: span 12; display:flex; gap:8px; align-items:center; margin-top:4px;">
-        <button class="btn small" id="btn-save-condition">조건 저장</button>
-        <button class="btn small ghost" id="btn-load-condition">내 조건 불러오기</button>
-        <button class="btn small ghost" id="btn-clear-condition">조건 삭제</button>
-        <div style="margin-left:auto;color:var(--muted);font-size:0.9rem">저장된 조건: <span id="savedLabel">없음</span></div>
-      </div>
-    </div>
-
-    <div class="chiprow" style="margin-top:12px" id="activeChips"></div>
-  </section>
-
-  <section class="container">
-    <div class="toolbar">
-      <div id="count" class="muted">검색 결과 0건</div>
-      <div>
-        <select class="select" id="sort">
-          <option value="relevance">정확도순</option>
-          <option value="deadline">마감 임박순</option>
-          <option value="latest">최신 등록순</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="results" id="results"></div>
-    <div class="empty" id="empty" style="display:none">조건에 맞는 사업이 없습니다. 필터를 조정해 보세요.</div>
-    <div class="pagination" id="pager"></div>
-  </section>
-
-  <div class="backdrop" id="backdrop" aria-hidden="true">
-    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
-      <div class="hd">
-        <strong id="detailTitle">상세 정보</strong>
-        <button class="btn small" id="closeDetail">닫기</button>
-      </div>
-      <div class="body" id="detailBody"></div>
-    </div>
-  </div>
 
       <footer class="container">© 2025 맞춤형 지원사업 플랫폼 · 샘플 UI</footer>
     </div>
@@ -438,22 +769,30 @@
      */
 
     const mock = [
-      { id:"P001", title:"청년 월세 한시 특별지원", region:"전국", category:"주거", host:"국토교통부",
-        targets:"만 19~34세 무주택 청년", benefit:"월 최대 20만원, 최대 12개월 지원",
-        period:{ start:"2025-01-01", end:"2025-12-31" }, link:"https://example.com/p1", contact:"국토부 콜센터 120",
-        tags:["월세", "주거", "청년"], minAge:19, maxAge:34, employment:"", income:"중위소득 150% 이하", updatedAt:"2025-02-10" },
-      { id:"P002", title:"지역 청년 교통비 지원", region:"대구", category:"복지", host:"대구광역시",
-        targets:"대구 청년(만 19~34세) 대중교통 이용자", benefit:"월 3만원 모바일 교통카드 지급",
-        period:{ start:"2025-03-01", end:"2025-06-30" }, link:"https://example.com/p2", contact:"대구시 청년정책과",
-        tags:["교통비", "대중교통"], minAge:19, maxAge:34, updatedAt:"2025-03-05" },
-      { id:"P003", title:"청년 취업 성공 패키지(가칭)", region:"경북", category:"일자리", host:"경상북도",
-        targets:"구직 청년", benefit:"취업 역량강화 교육 + 면접비/자격증 비용 지원",
-        period:{ start:"2025-01-15", end:"2025-05-31" }, link:"https://example.com/p3", contact:"경북일자리센터",
-        tags:["취업", "교육", "면접비"], employment:"구직자", updatedAt:"2025-01-20" },
-      { id:"P004", title:"청년 창업 시드 펀드", region:"서울", category:"금융", host:"서울산업진흥원",
-        targets:"예비/초기 창업자", benefit:"시드 투자 최대 5천만원 + 보육 프로그램",
-        period:{ start:"2025-02-01", end:"2025-12-31" }, link:"https://example.com/p4", contact:"SBA",
-        tags:["창업", "투자"], employment:"프리랜서/자영업", updatedAt:"2025-02-12" }
+      {
+        id: "P001", title: "청년 월세 한시 특별지원", region: "전국", category: "주거", host: "국토교통부",
+        targets: "만 19~34세 무주택 청년", benefit: "월 최대 20만원, 최대 12개월 지원",
+        period: { start: "2025-01-01", end: "2025-12-31" }, link: "https://example.com/p1", contact: "국토부 콜센터 120",
+        tags: ["월세", "주거", "청년"], minAge: 19, maxAge: 34, employment: "", income: "중위소득 150% 이하", updatedAt: "2025-02-10"
+      },
+      {
+        id: "P002", title: "지역 청년 교통비 지원", region: "대구", category: "복지", host: "대구광역시",
+        targets: "대구 청년(만 19~34세) 대중교통 이용자", benefit: "월 3만원 모바일 교통카드 지급",
+        period: { start: "2025-03-01", end: "2025-06-30" }, link: "https://example.com/p2", contact: "대구시 청년정책과",
+        tags: ["교통비", "대중교통"], minAge: 19, maxAge: 34, updatedAt: "2025-03-05"
+      },
+      {
+        id: "P003", title: "청년 취업 성공 패키지(가칭)", region: "경북", category: "일자리", host: "경상북도",
+        targets: "구직 청년", benefit: "취업 역량강화 교육 + 면접비/자격증 비용 지원",
+        period: { start: "2025-01-15", end: "2025-05-31" }, link: "https://example.com/p3", contact: "경북일자리센터",
+        tags: ["취업", "교육", "면접비"], employment: "구직자", updatedAt: "2025-01-20"
+      },
+      {
+        id: "P004", title: "청년 창업 시드 펀드", region: "서울", category: "금융", host: "서울산업진흥원",
+        targets: "예비/초기 창업자", benefit: "시드 투자 최대 5천만원 + 보육 프로그램",
+        period: { start: "2025-02-01", end: "2025-12-31" }, link: "https://example.com/p4", contact: "SBA",
+        tags: ["창업", "투자"], employment: "프리랜서/자영업", updatedAt: "2025-02-12"
+      }
     ];
 
     // 상태
@@ -479,9 +818,9 @@
       "현금지원", "대출", "바우처", "컨설팅", "교육지원", "시설지원"
     ];
 
-    const state = { 
-      page: 1, 
-      pageSize: 6, 
+    const state = {
+      page: 1,
+      pageSize: 6,
       saved: new Set(),
       recentlyViewed: [],
       selectedCategory: '',
@@ -489,8 +828,8 @@
     };
 
     // 유틸
-    const $ = (sel, root=document) => root.querySelector(sel);
-    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+    const $ = (sel, root = document) => root.querySelector(sel);
+    const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
     const inPeriod = (p) => {
       const today = new Date();
       const s = new Date(p.period.start);
@@ -499,7 +838,7 @@
     };
 
     // 필터 적용
-    function getFilters(){
+    function getFilters() {
       return {
         q: $('#q').value.trim().toLowerCase(),
         region: $('#region').value,
@@ -512,18 +851,18 @@
         sort: $('#sort').value,
         sex: $('#sex') ? $('#sex').value : '',
         asset: $('#asset') ? parseInt($('#asset').value || '0', 10) : 0,
-        interests: ($('#interests') ? $('#interests').value.split(',').map(s=>s.trim()).filter(Boolean) : [])
+        interests: ($('#interests') ? $('#interests').value.split(',').map(s => s.trim()).filter(Boolean) : [])
       }
     }
 
-    function applyFilters(){
+    function applyFilters() {
       const f = getFilters();
       let list = mock.slice();
 
       // 검색어
       if (f.q) {
         list = list.filter(p => (
-          p.title+" "+p.targets+" "+p.benefit+" "+(p.tags||[]).join(' ') + " " + (p.host||'')
+          p.title + " " + p.targets + " " + p.benefit + " " + (p.tags || []).join(' ') + " " + (p.host || '')
         ).toLowerCase().includes(f.q));
       }
       // 지역/분야
@@ -536,14 +875,14 @@
       });
       // 소득/고용
       if (f.income) list = list.filter(p => !p.income || p.income === f.income);
-      if (f.employment) list = list.filter(p => (p.employment||'') === f.employment);
+      if (f.employment) list = list.filter(p => (p.employment || '') === f.employment);
       // 관심분야(관심 태그와 매칭)
       if (f.interests && f.interests.length) {
         list = list.filter(p => {
-          const tags = (p.tags||[]).map(t=>t.toLowerCase());
+          const tags = (p.tags || []).map(t => t.toLowerCase());
           return f.interests.some(i => {
             const s = i.toLowerCase();
-            return tags.includes(s) || (p.title||'').toLowerCase().includes(s) || (p.category||'').toLowerCase().includes(s);
+            return tags.includes(s) || (p.title || '').toLowerCase().includes(s) || (p.category || '').toLowerCase().includes(s);
           });
         });
       }
@@ -553,45 +892,45 @@
 
       // 정렬
       if (f.sort === 'deadline') {
-        list.sort((a,b)=> new Date(a.period.end) - new Date(b.period.end));
+        list.sort((a, b) => new Date(a.period.end) - new Date(b.period.end));
       } else if (f.sort === 'latest') {
-        list.sort((a,b)=> new Date(b.updatedAt||b.period.start) - new Date(a.updatedAt||a.period.start));
+        list.sort((a, b) => new Date(b.updatedAt || b.period.start) - new Date(a.updatedAt || a.period.start));
       }
 
       renderChips(f);
       render(list);
     }
 
-    function renderChips(f){
+    function renderChips(f) {
       const host = $('#activeChips');
       host.innerHTML = '';
-      const add = (label,val) => { if(val){ const el=document.createElement('span'); el.className='chip'; el.textContent=label+': '+val; host.appendChild(el);} };
-      add('지역', f.region||'전국');
-      add('분야', f.category||'전체');
-      if($('#q').value) add('키워드', $('#q').value);
-      if($('#ageMin').value || $('#ageMax').value) add('나이', `${$('#ageMin').value||'0'}~${$('#ageMax').value||'무한'}`);
-      if(f.income) add('소득', f.income);
-      if(f.employment) add('고용', f.employment);
-      if(f.sex) add('성별', f.sex === 'male' ? '남' : f.sex === 'female' ? '여' : f.sex);
-      if(f.asset) add('재산(원)', f.asset.toLocaleString());
-      if(f.interests && f.interests.length) add('관심', f.interests.join(', '));
-      add('마감', {open:'진행중만', all:'전체', closed:'마감만'}[f.deadline]);
+      const add = (label, val) => { if (val) { const el = document.createElement('span'); el.className = 'chip'; el.textContent = label + ': ' + val; host.appendChild(el); } };
+      add('지역', f.region || '전국');
+      add('분야', f.category || '전체');
+      if ($('#q').value) add('키워드', $('#q').value);
+      if ($('#ageMin').value || $('#ageMax').value) add('나이', `${$('#ageMin').value || '0'}~${$('#ageMax').value || '무한'}`);
+      if (f.income) add('소득', f.income);
+      if (f.employment) add('고용', f.employment);
+      if (f.sex) add('성별', f.sex === 'male' ? '남' : f.sex === 'female' ? '여' : f.sex);
+      if (f.asset) add('재산(원)', f.asset.toLocaleString());
+      if (f.interests && f.interests.length) add('관심', f.interests.join(', '));
+      add('마감', { open: '진행중만', all: '전체', closed: '마감만' }[f.deadline]);
     }
 
-    function paginate(list){
-      const start = (state.page-1)*state.pageSize;
-      return list.slice(start, start+state.pageSize);
+    function paginate(list) {
+      const start = (state.page - 1) * state.pageSize;
+      return list.slice(start, start + state.pageSize);
     }
 
-    function render(list){
+    function render(list) {
       $('#count').textContent = `검색 결과 ${list.length}건`;
       const pageList = paginate(list);
       const host = $('#results');
       host.innerHTML = '';
-      if (!pageList.length){ $('#empty').style.display='block'; $('#pager').innerHTML=''; return; }
-      $('#empty').style.display='none';
+      if (!pageList.length) { $('#empty').style.display = 'block'; $('#pager').innerHTML = ''; return; }
+      $('#empty').style.display = 'none';
 
-      pageList.forEach(p=>{
+      pageList.forEach(p => {
         const live = inPeriod(p);
         const el = document.createElement('article');
         el.className = 'card';
@@ -603,10 +942,10 @@
           <div class="title">${p.title}</div>
           <div class="muted">${p.host}</div>
           <div class="desc">${p.benefit}</div>
-          <div class="muted">대상: ${p.targets || '-'}${p.income? ' · '+p.income:''}</div>
-          <div class="period">신청기간: ${p.period.start} ~ ${p.period.end} ${live? '<span class="live">● 진행중</span>':'<span style="color:#9aa8bb">마감</span>'}</div>
+          <div class="muted">대상: ${p.targets || '-'}${p.income ? ' · ' + p.income : ''}</div>
+          <div class="period">신청기간: ${p.period.start} ~ ${p.period.end} ${live ? '<span class="live">● 진행중</span>' : '<span style="color:#9aa8bb">마감</span>'}</div>
           <div class="badges">
-            ${(p.tags||[]).map(t=>`<span class="badge clickable" data-search="${t}">#${t}</span>`).join('')}
+            ${(p.tags || []).map(t => `<span class="badge clickable" data-search="${t}">#${t}</span>`).join('')}
             ${p.income ? `<span class="badge clickable" data-search="${p.income}">${p.income}</span>` : ''}
             ${p.employment ? `<span class="badge clickable" data-search="${p.employment}">${p.employment}</span>` : ''}
           </div>
@@ -615,20 +954,20 @@
               <button class="btn small" data-act="detail" data-id="${p.id}">자세히</button>
               <a class="btn small ghost" href="${p.link}" target="_blank" rel="noopener">공식 사이트</a>
             </div>
-            <button class="btn small ${state.saved.has(p.id)? 'acc':''}" data-act="save" data-id="${p.id}">${state.saved.has(p.id)? '저장됨★':'저장'}</button>
+            <button class="btn small ${state.saved.has(p.id) ? 'acc' : ''}" data-act="save" data-id="${p.id}">${state.saved.has(p.id) ? '저장됨★' : '저장'}</button>
           </div>
         `;
         host.appendChild(el);
       });
       // 페이지네이션
-      const pages = Math.ceil(list.length/state.pageSize) || 1;
+      const pages = Math.ceil(list.length / state.pageSize) || 1;
       const pager = $('#pager');
       pager.innerHTML = '';
-      for (let i=1;i<=pages;i++){
+      for (let i = 1; i <= pages; i++) {
         const a = document.createElement('button');
-        a.className = 'page'+(i===state.page?' active':'');
+        a.className = 'page' + (i === state.page ? ' active' : '');
         a.textContent = i;
-        a.addEventListener('click', ()=>{ state.page=i; render(list); window.scrollTo({top:0,behavior:'smooth'});});
+        a.addEventListener('click', () => { state.page = i; render(list); window.scrollTo({ top: 0, behavior: 'smooth' }); });
         pager.appendChild(a);
       }
     }
@@ -640,7 +979,7 @@
         acc[p.category] = (acc[p.category] || 0) + 1;
         return acc;
       }, {});
-      
+
       $$('.sidebar .menu-item').forEach(item => {
         const categoryText = item.firstElementChild.textContent;
         if (categoryText === '전체') {
@@ -659,7 +998,7 @@
       state.recentlyViewed.unshift(program);
       // 최대 5개만 유지
       state.recentlyViewed = state.recentlyViewed.slice(0, 5);
-      
+
       // UI 업데이트
       const container = $('.sidebar-section:nth-child(2)');
       const recentItems = state.recentlyViewed.map(p => `
@@ -670,17 +1009,17 @@
           </div>
         </div>
       `).join('');
-      
+
       container.innerHTML = `
         <h3>최근 본 지원사업</h3>
         ${recentItems || '<div class="muted" style="text-align:center">최근 본 항목이 없습니다</div>'}
       `;
     }
 
-    function openDetail(id){
-      const p = mock.find(x=>x.id===id);
+    function openDetail(id) {
+      const p = mock.find(x => x.id === id);
       if (!p) return;
-      
+
       // 최근 본 항목에 추가
       updateRecentlyViewed(p);
       if (!p) return;
@@ -692,24 +1031,24 @@
             <p class="muted">주관: ${p.host || '-'}</p>
             <p>대상: ${p.targets || '-'}</p>
             <p>분야/지역: ${p.category} · ${p.region}</p>
-            <p>신청기간: ${p.period.start} ~ ${p.period.end} ${inPeriod(p)? '<span class="live">진행중</span>':'<span style="color:#9aa8bb">마감</span>'}</p>
+            <p>신청기간: ${p.period.start} ~ ${p.period.end} ${inPeriod(p) ? '<span class="live">진행중</span>' : '<span style="color:#9aa8bb">마감</span>'}</p>
           </div>
           <div>
             <h3>지원 내용</h3>
             <p>${p.benefit || '-'}</p>
-            <div class="chiprow" style="margin-top:8px">${(p.tags||[]).map(t=>`<span class='chip'>#${t}</span>`).join('')}</div>
+            <div class="chiprow" style="margin-top:8px">${(p.tags || []).map(t => `<span class='chip'>#${t}</span>`).join('')}</div>
           </div>
         </div>
         <hr style="border-color:#203045;opacity:.4;margin:16px 0">
         <p><strong>신청/안내:</strong> <a href="${p.link}" target="_blank" rel="noopener">공식 페이지</a></p>
         <p><strong>문의:</strong> ${p.contact || '-'}</p>
         <div style="display:flex;gap:8px;margin-top:12px">
-          <button class="btn acc" data-act="save" data-id="${p.id}">${state.saved.has(p.id)? '저장됨★':'저장'}</button>
+          <button class="btn acc" data-act="save" data-id="${p.id}">${state.saved.has(p.id) ? '저장됨★' : '저장'}</button>
           <button class="btn ghost" onclick="navigator.clipboard.writeText('${p.link}').then(()=>alert('링크 복사됨'))">링크 복사</button>
         </div>
       `;
-      $('#backdrop').style.display='flex';
-      $('#backdrop').setAttribute('aria-hidden','false');
+      $('#backdrop').style.display = 'flex';
+      $('#backdrop').setAttribute('aria-hidden', 'false');
     }
 
     // 이벤트 바인딩
@@ -721,7 +1060,7 @@
 
     // 검색 버튼 클릭
     $('#btn-search').addEventListener('click', executeSearch);
-    
+
     // 키워드 입력 필드 엔터키
     $('#q').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
@@ -731,10 +1070,10 @@
     });
 
     // 초기화 버튼
-    $('#btn-reset').addEventListener('click', ()=>{
-      $$('#filters .input, #filters .select').forEach(el=> el.value='');
-      $('#deadline').value='open';
-      state.page=1;
+    $('#btn-reset').addEventListener('click', () => {
+      $$('#filters .input, #filters .select').forEach(el => el.value = '');
+      $('#deadline').value = 'open';
+      state.page = 1;
       applyFilters();
     });
 
@@ -744,11 +1083,11 @@
       const isCategory = ['주거', '일자리', '교육', '금융', '복지', '기타'].includes(searchTerm);
       const isIncome = searchTerm.includes('중위소득');
       const isEmployment = ['재직자', '구직자', '프리랜서/자영업'].includes(searchTerm);
-      
+
       // 필터 초기화
       $$('#filters .input, #filters .select').forEach(el => el.value = '');
       $('#deadline').value = 'open';
-      
+
       // 적절한 필터에 값 설정
       if (isRegion) {
         $('#region').value = searchTerm;
@@ -762,18 +1101,18 @@
         // 그 외는 키워드 검색
         $('#q').value = searchTerm.replace('#', '');
       }
-      
+
       executeSearch();
     }
 
-    $('#results').addEventListener('click', (e)=>{
+    $('#results').addEventListener('click', (e) => {
       // 버튼 클릭 처리
       const btn = e.target.closest('button');
       if (btn) {
         const id = btn.getAttribute('data-id');
         const act = btn.getAttribute('data-act');
-        if (act==='detail') openDetail(id);
-        if (act==='save') toggleSave(id);
+        if (act === 'detail') openDetail(id);
+        if (act === 'save') toggleSave(id);
         return;
       }
 
@@ -787,24 +1126,24 @@
       }
     });
 
-    $('#closeDetail').addEventListener('click', ()=>{
-      $('#backdrop').style.display='none';
-      $('#backdrop').setAttribute('aria-hidden','true');
+    $('#closeDetail').addEventListener('click', () => {
+      $('#backdrop').style.display = 'none';
+      $('#backdrop').setAttribute('aria-hidden', 'true');
     });
-    $('#backdrop').addEventListener('click', (e)=>{ if(e.target.id==='backdrop') $('#closeDetail').click(); });
+    $('#backdrop').addEventListener('click', (e) => { if (e.target.id === 'backdrop') $('#closeDetail').click(); });
 
-    function toggleSave(id){
+    function toggleSave(id) {
       if (state.saved.has(id)) state.saved.delete(id); else state.saved.add(id);
       $('#btn-saved').textContent = `저장함(${state.saved.size})`;
       applyFilters();
     }
 
-    $('#btn-saved').addEventListener('click', ()=>{
+    $('#btn-saved').addEventListener('click', () => {
       // 저장함 뷰: 간단히 저장된 항목만 보이도록 덮어쓰기
-      const saved = mock.filter(m=>state.saved.has(m.id));
+      const saved = mock.filter(m => state.saved.has(m.id));
       render(saved);
       $('#count').textContent = `저장한 항목 ${saved.length}건`;
-      $('#pager').innerHTML='';
+      $('#pager').innerHTML = '';
     });
 
     // TODO: 실제 API 연동 지점
@@ -820,7 +1159,7 @@
           const category = item.firstElementChild.textContent;
           $$('.sidebar .menu-item').forEach(i => i.classList.remove('active'));
           item.classList.add('active');
-          
+
           $('#category').value = category === '전체' ? '' : category;
           state.page = 1;
           applyFilters();
@@ -840,13 +1179,13 @@
     // 저장된 조건 로드/관리 (localStorage)
     const STORAGE_KEY = 'smp_saved_conditions_v2';
 
-    function updateSavedLabel(){
+    function updateSavedLabel() {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) { $('#savedLabel').textContent = '없음'; return; }
-      try{
+      try {
         const conditions = JSON.parse(raw);
         $('#savedLabel').textContent = `${conditions.length}개 저장됨`;
-      }catch(e){ $('#savedLabel').textContent = '없음'; }
+      } catch (e) { $('#savedLabel').textContent = '없음'; }
     }
 
     // 조건 관리 시트 열기
@@ -874,12 +1213,12 @@
         
         <hr style="margin:20px 0">
         <h3 style="margin:0 0 12px">저장된 조건 목록</h3>
-        ${noConditions ? 
+        ${noConditions ?
           '<div class="empty" style="padding:16px">저장된 조건이 없습니다.</div>' :
           '<div class="saved-conditions">' +
-            conditions.map((c, i) => `
+          conditions.map((c, i) => `
               <div class="recent-item" style="margin-bottom:8px;position:relative">
-                <div class="title">${c.name || '저장된 조건 ' + (i+1)}</div>
+                <div class="title">${c.name || '저장된 조건 ' + (i + 1)}</div>
                 <div class="meta">
                   ${new Date(c.savedAt).toLocaleString()} · 
                   ${c.notifyEnabled ? '알림 켜짐 ● ' : '알림 꺼짐'}
@@ -919,12 +1258,12 @@
         localStorage.setItem(STORAGE_KEY, JSON.stringify(conditions));
         updateSavedLabel();
         openConditionManager(); // 목록 갱신
-        
+
         // 알림 활성화된 경우
         if (notifyEnabled) {
           setupNotification(conditions.length - 1); // 마지막 인덱스
         }
-      } catch(e) {
+      } catch (e) {
         console.error(e);
         alert('조건 저장 중 오류가 발생했습니다.');
       }
@@ -936,7 +1275,7 @@
         const conditions = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
         const condition = conditions[index];
         if (!condition) return;
-        
+
         const f = condition.filters || {};
         // 필터 UI 복원
         if ($('#q')) $('#q').value = f.q || '';
@@ -955,7 +1294,7 @@
         $('#closeDetail').click(); // 관리자 시트 닫기
         state.page = 1;
         applyFilters();
-      } catch(e) {
+      } catch (e) {
         console.error(e);
         alert('저장된 조건을 불러오는 중 오류가 발생했습니다.');
       }
@@ -969,7 +1308,7 @@
         localStorage.setItem(STORAGE_KEY, JSON.stringify(conditions));
         updateSavedLabel();
         openConditionManager(); // 목록 갱신
-      } catch(e) {
+      } catch (e) {
         console.error(e);
         alert('조건 삭제 중 오류가 발생했습니다.');
       }
@@ -987,8 +1326,8 @@
         const matches = mock.filter(p => {
           const f = condition.filters;
           // 간단한 매칭 체크 (실제로는 더 정교한 로직 필요)
-          return p.title.toLowerCase().includes((f.q || '').toLowerCase()) || 
-                 (f.region ? p.region === f.region : true);
+          return p.title.toLowerCase().includes((f.q || '').toLowerCase()) ||
+            (f.region ? p.region === f.region : true);
         });
         if (matches.length > 0) {
           console.log(`[알림] "${condition.name}" 조건에 맞는 ${matches.length}개의 새로운 지원사업이 있습니다!`);
@@ -1018,7 +1357,7 @@
     // 인기 태그 렌더링
     function renderPopularTags() {
       const container = $('#popularTags');
-      container.innerHTML = POPULAR_TAGS.map(({tag, count}) => `
+      container.innerHTML = POPULAR_TAGS.map(({ tag, count }) => `
         <span class="popular-tag" data-tag="${tag}">
           ${tag}
           <span class="count">${count}</span>
@@ -1039,7 +1378,7 @@
           return;
         }
 
-        const matches = ALL_TAGS.filter(tag => 
+        const matches = ALL_TAGS.filter(tag =>
           tag.toLowerCase().includes(query)
         ).slice(0, 8); // 최대 8개까지만 표시
 
@@ -1081,7 +1420,7 @@
       input.addEventListener('keydown', e => {
         if (!autocomplete.style.display || autocomplete.style.display === 'none') return;
 
-        switch(e.key) {
+        switch (e.key) {
           case 'ArrowDown':
             e.preventDefault();
             selectItem(selectedIndex + 1);
@@ -1136,6 +1475,70 @@
     renderPopularTags();
     setupAutocomplete();
     applyFilters();
+    
   </script>
+  <!-- === [추가] 인증 스크립트(IIFE) === -->
+<script>
+(function(){
+  const btn  = document.getElementById('authBtn');
+  const menu = document.getElementById('authMenu');
+  const my   = document.getElementById('myPageLink');
+  const out  = document.getElementById('logoutBtn');
+
+  function openLoginPopup(){
+    const w = 520, h = 640;
+    const left = (screen.width - w)/2;
+    const top  = (screen.height - h)/2;
+    // public/login.html 기준(경로 다르면 여기 수정)
+    window.open('login.html', 'login',
+      `width=${w},height=${h},left=${left},top=${top},resizable=no`);
+  }
+
+  function renderAuth(){
+    const raw = sessionStorage.getItem('currentUser');
+    if(!raw){
+      btn.textContent = '로그인';
+      btn.onclick = openLoginPopup;
+      my.style.display = 'none';
+      out.style.display = 'none';
+      return;
+    }
+    const user = JSON.parse(raw);
+    btn.textContent = `${user.name || user.email} ▾`;
+    btn.onclick = () => {
+      menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+    };
+    my.style.display = 'block';
+    out.style.display = 'block';
+  }
+
+  // login.html → postMessage 수신
+  window.addEventListener('message', (e)=>{
+    if(e?.data?.type === 'auth:login'){
+      sessionStorage.setItem('currentUser', JSON.stringify(e.data.user));
+      menu.style.display = 'none';
+      renderAuth();
+    }
+  });
+
+  // 로그아웃
+  out?.addEventListener('click', ()=>{
+    sessionStorage.removeItem('currentUser');
+    menu.style.display = 'none';
+    renderAuth();
+  });
+
+  // 메뉴 외부 클릭시 닫기
+  document.addEventListener('click', (ev)=>{
+    if(!menu.contains(ev.target) && ev.target !== btn){
+      menu.style.display = 'none';
+    }
+  });
+
+  renderAuth();
+})();
+</script>
+
 </body>
+
 </html>
