@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>마이페이지 · 맞춤형 지원사업 플랫폼</title>
+  <style>
+    body{margin:0;background:#0b0f14;color:#e8eef5;font-family:system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,Malgun Gothic,Arial,sans-serif}
+    .wrap{max-width:1000px;margin:0 auto;padding:24px}
+    .card{background:#121821;border:1px solid #1f2a3a;border-radius:16px;padding:16px;margin-bottom:16px}
+    .row{display:flex;gap:12px;align-items:center;justify-content:space-between}
+    .btn{border:1px solid #2b394a;background:#0f1622;color:#e8eef5;padding:8px 12px;border-radius:10px;cursor:pointer}
+    .btn-danger{border-color:#3b1f26;background:#1a0f13;color:#ffd6d6}
+    .btn-danger:hover{background:#2a131a}
+    a{color:#5cc8ff;text-decoration:none}
+    .muted{color:#8ca0b3}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="row" style="margin-bottom:12px">
+      <h1 style="margin:0">마이페이지</h1>
+      <a class="btn" href="support-matching-prototype.html">← 돌아가기</a>
+    </div>
+
+    <div class="card" id="profile">
+      <h3>내 정보</h3>
+      <p id="userName">이름/닉네임: -</p>
+      <p id="userEmail">이메일: -</p>
+      <div class="row">
+        <button class="btn" id="logout">로그아웃</button>
+        <button class="btn btn-danger" id="deleteAccount">계정 삭제</button>
+      </div>
+      <p class="muted" style="margin-top:8px">계정 삭제 시 저장한 조건 등 로컬 데이터도 함께 삭제됩니다.</p>
+    </div>
+
+    <div class="card">
+      <h3>저장한 조건</h3>
+      <p id="condCount">0개</p>
+      <button class="btn" id="openCond">조건 관리 열기</button>
+    </div>
+
+    <div class="card">
+      <h3>저장함</h3>
+      <div id="savedList">비어있습니다.</div>
+    </div>
+  </div>
+
+  <script>
+    // === 세션 로그인 상태 (메인과 동일) ===
+    const COND_KEY = 'smp_saved_conditions_v2';
+
+    function getCurrentUser(){
+      try { return JSON.parse(sessionStorage.getItem('currentUser')); }
+      catch(e){ return null; }
+    }
+    function clearSessionUser(){ sessionStorage.removeItem('currentUser'); }
+
+    const u = getCurrentUser();
+    if(!u){
+      location.replace('support-matching-prototype.html');
+    }
+
+    // 내 정보 채우기
+    document.getElementById('userName').textContent = '이름/닉네임: ' + (u?.name || u?.email || '-');
+    document.getElementById('userEmail').textContent = '이메일: ' + (u?.email || '-');
+
+    // 저장된 조건 수
+    const conditions = JSON.parse(localStorage.getItem(COND_KEY) || '[]');
+    document.getElementById('condCount').textContent = `${conditions.length}개`;
+
+    // 저장함 안내 (프로토타입)
+    const savedHost = document.getElementById('savedList');
+    savedHost.textContent = conditions.length ? '조건 관리에서 확인하세요.' : '비어있습니다.';
+
+    // 로그아웃
+    document.getElementById('logout').onclick = () => {
+      clearSessionUser();
+      location.replace('support-matching-prototype.html');
+    };
+
+    // ===== 계정 삭제 =====
+    function clearAppStorage(){
+      // 우리 앱 prefix 로컬 키 전부 제거(smp_ 로 시작하는 것들)
+      const toRemove = [];
+      for (let i=0; i<localStorage.length; i++){
+        const k = localStorage.key(i);
+        if (k && k.startsWith('smp_')) toRemove.push(k);
+      }
+      toRemove.forEach(k => localStorage.removeItem(k));
+
+      // 세션 사용자 제거
+      clearSessionUser();
+    }
+
+    async function deleteAccountFlow(){
+      // 1) 사용자 확인
+      const step1 = confirm('정말로 계정을 삭제하시겠습니까? 이 동작은 되돌릴 수 없습니다.');
+      if (!step1) return;
+
+      // 추가 안전장치: 이메일 확인 입력(선택)
+      const typed = prompt('확인을 위해 이메일을 입력하세요 (취소하면 중단됩니다):', '');
+      if (typed === null) return;
+      if ((typed || '').trim().toLowerCase() !== (u.email || '').toLowerCase()){
+        alert('이메일이 일치하지 않아 계정 삭제가 취소되었습니다.');
+        return;
+      }
+
+      // 2) (선택) 서버 API가 있을 경우 호출
+      // try {
+      //   const res = await fetch('/api/account/delete', { method:'DELETE', credentials:'include' });
+      //   if (!res.ok) throw new Error('서버 응답 오류');
+      // } catch (err) {
+      //   alert('서버와 통신 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      //   return;
+      // }
+
+      // 3) 로컬 데이터 정리 후 리다이렉트
+      clearAppStorage();
+      alert('계정이 삭제되었습니다.');
+      location.replace('support-matching-prototype.html');
+    }
+
+    document.getElementById('deleteAccount').addEventListener('click', deleteAccountFlow);
+
+    // 조건 관리 열기
+    document.getElementById('openCond').onclick = () => {
+      location.href = 'support-matching-prototype.html#open-conditions';
+    };
+  </script>
+</body>
+</html>
+
