@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>로그인 · 맞춤형 지원 플랫폼</title>
+  <style>
+    :root{
+      --bg:#0b0f14; --panel:#121821; --text:#e8eef5; --muted:#8ca0b3;
+      --acc:#5cc8ff; --border:#1f2a38; --ok:#40d1a7; --danger:#ff6b6b;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,Malgun Gothic,Arial,sans-serif;
+      background:linear-gradient(180deg,#0b0f14 0%,#0e141d 100%); color:var(--text);
+      display:flex; align-items:center; justify-content:center;
+    }
+    .card{
+      width: min(92vw, 440px); background:var(--panel); border:1px solid var(--border);
+      border-radius:20px; padding:22px; box-shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+    h1{font-size:1.35rem; margin:0 0 18px}
+    .tabs{display:flex; gap:8px; margin-bottom:16px}
+    .tab{
+      flex:1; text-align:center; padding:10px 12px; border-radius:12px; cursor:pointer;
+      background:#0f151e; border:1px solid var(--border); color:var(--muted); font-weight:700;
+    }
+    .tab.active{ color:var(--text); border-color:#2b3a51; background:#111926 }
+    label{display:block; font-size:.9rem; color:var(--muted); margin:10px 2px 6px}
+    input{
+      width:100%; padding:12px; border-radius:12px; border:1px solid var(--border);
+      background:#0f151e; color:var(--text);
+    }
+    .row{display:flex; gap:10px}
+    .submit{
+      margin-top:14px; width:100%; padding:12px; border:none; border-radius:12px;
+      background:var(--acc); color:#061017; font-weight:800; cursor:pointer;
+    }
+    .link{margin-top:10px; text-align:center; color:var(--muted); font-size:.9rem}
+    .link a{color:var(--acc); text-decoration:none}
+    .msg{margin-top:10px; font-size:.9rem}
+    .ok{color:var(--ok)} .err{color:var(--danger)}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>맞춤형 지원 플랫폼</h1>
+    <div class="tabs">
+      <div id="tabLogin" class="tab active">로그인</div>
+      <div id="tabJoin"  class="tab">회원가입</div>
+    </div>
+
+    <!-- 로그인 -->
+    <form id="loginForm">
+      <label for="loginEmail">이메일</label>
+      <input id="loginEmail" type="email" placeholder="you@example.com" required />
+
+      <label for="loginPw">비밀번호</label>
+      <input id="loginPw" type="password" placeholder="********" required />
+
+      <button class="submit" type="submit">로그인</button>
+      <div class="link"><a id="goJoin" href="#">처음 오셨나요? 회원가입</a></div>
+      <div id="loginMsg" class="msg"></div>
+    </form>
+
+    <!-- 회원가입 -->
+    <form id="joinForm" style="display:none">
+      <div class="row">
+        <div style="flex:1">
+          <label for="joinName">이름</label>
+          <input id="joinName" type="text" placeholder="홍길동" required />
+        </div>
+        <div style="flex:1">
+          <label for="joinAge">나이</label>
+          <input id="joinAge" type="number" min="0" placeholder="만 나이" />
+        </div>
+      </div>
+
+      <label for="joinEmail">이메일</label>
+      <input id="joinEmail" type="email" placeholder="you@example.com" required />
+
+      <label for="joinPw">비밀번호</label>
+      <input id="joinPw" type="password" minlength="6" placeholder="6자 이상" required />
+
+      <button class="submit" type="submit">회원가입</button>
+      <div class="link"><a id="goLogin" href="#">이미 계정이 있으신가요? 로그인</a></div>
+      <div id="joinMsg" class="msg"></div>
+    </form>
+  </div>
+
+  <script>
+  (function(){
+    // 간단한 로컬 저장 기반 데모(백엔드 연동 전용)
+    const storageKey = 'SMP_USERS_V1';
+
+    const tabLogin = document.getElementById('tabLogin');
+    const tabJoin  = document.getElementById('tabJoin');
+    const loginF   = document.getElementById('loginForm');
+    const joinF    = document.getElementById('joinForm');
+    const loginMsg = document.getElementById('loginMsg');
+    const joinMsg  = document.getElementById('joinMsg');
+    const goJoin   = document.getElementById('goJoin');
+    const goLogin  = document.getElementById('goLogin');
+
+    function getUsers(){
+      try { return JSON.parse(localStorage.getItem(storageKey)) || []; }
+      catch(e){ return []; }
+    }
+    function setUsers(arr){
+      localStorage.setItem(storageKey, JSON.stringify(arr));
+    }
+
+    function switchTab(which){
+      if(which === 'login'){
+        tabLogin.classList.add('active');
+        tabJoin.classList.remove('active');
+        loginF.style.display = '';
+        joinF.style.display  = 'none';
+      }else{
+        tabJoin.classList.add('active');
+        tabLogin.classList.remove('active');
+        joinF.style.display  = '';
+        loginF.style.display = 'none';
+      }
+      loginMsg.textContent = '';
+      joinMsg.textContent  = '';
+    }
+
+    tabLogin.onclick = () => switchTab('login');
+    tabJoin.onclick  = () => switchTab('join');
+    goJoin.onclick   = (e)=>{ e.preventDefault(); switchTab('join'); };
+    goLogin.onclick  = (e)=>{ e.preventDefault(); switchTab('login'); };
+
+    // 로그인
+    loginF.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      loginMsg.textContent = '';
+      const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+      const pw    = document.getElementById('loginPw').value;
+      const users = getUsers();
+      const u = users.find(x=>x.email===email && x.pw===pw);
+      if(!u){
+        loginMsg.className='msg err';
+        loginMsg.textContent='이메일 또는 비밀번호가 올바르지 않습니다.';
+        return;
+      }
+      // 부모창에 사용자 전달 후 창 닫기
+      const user = { email:u.email, name:u.name || u.email };
+      if(window.opener){
+        window.opener.postMessage({ type:'auth:login', user }, '*');
+      }
+      loginMsg.className='msg ok';
+      loginMsg.textContent='로그인 성공! 창을 닫습니다...';
+      setTimeout(()=> window.close(), 400);
+    });
+
+    // 회원가입
+    joinF.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      joinMsg.textContent='';
+      const name  = document.getElementById('joinName').value.trim();
+      const age   = document.getElementById('joinAge').value.trim();
+      const email = document.getElementById('joinEmail').value.trim().toLowerCase();
+      const pw    = document.getElementById('joinPw').value;
+
+      const users = getUsers();
+      if(users.some(u=>u.email===email)){
+        joinMsg.className='msg err';
+        joinMsg.textContent='이미 가입된 이메일입니다.';
+        return;
+      }
+      users.push({ name, age, email, pw, createdAt: Date.now() });
+      setUsers(users);
+
+      joinMsg.className='msg ok';
+      joinMsg.textContent='가입 완료! 자동 로그인합니다...';
+
+      // 자동 로그인 처리 & 부모창 갱신
+      const user = { email, name: name || email };
+      if(window.opener){
+        window.opener.postMessage({ type:'auth:login', user }, '*');
+      }
+      setTimeout(()=> window.close(), 500);
+    });
+
+    // 시작은 로그인 탭
+    switchTab('login');
+  })();
+  </script>
+</body>
+</html>
