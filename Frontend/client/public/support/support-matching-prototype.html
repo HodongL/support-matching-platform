@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>맞춤형 지원사업 플랫폼 · Starter</title>
+  <link rel="stylesheet" href="./smp.css" />
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div class="brand"><span class="dot"></span>맞춤형 지원사업 플랫폼</div>
+      <div class="actions">
+        <button class="btn ghost small" id="btn-saved">저장함(0)</button>
+        <button class="btn small" id="btn-reset">초기화</button>
+        <button class="btn acc small" id="btn-search">검색</button>
+        <div class="auth">
+          <button class="btn ghost small" id="authBtn">로그인</button>
+          <div id="authMenu" class="auth-menu">
+            <!-- public 루트에 있는 페이지로 이동해야 하므로 ../ 로 수정 -->
+            <a id="myPageLink" href="../mypage.html" style="display:none">마이페이지</a>
+            <button id="logoutBtn" type="button" style="display:none">로그아웃</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <h3>카테고리</h3>
+        <div class="menu-item active">
+          <span>전체</span>
+          <span class="count">4</span>
+        </div>
+        <div class="menu-item">
+          <span>주거</span>
+          <span class="count">1</span>
+        </div>
+        <div class="menu-item">
+          <span>일자리</span>
+          <span class="count">1</span>
+        </div>
+        <div class="menu-item">
+          <span>교육</span>
+          <span class="count">0</span>
+        </div>
+        <div class="menu-item">
+          <span>금융</span>
+          <span class="count">1</span>
+        </div>
+        <div class="menu-item">
+          <span>복지</span>
+          <span class="count">1</span>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>최근 본 지원사업</h3>
+        <div class="recent-item">
+          <div class="title">청년 월세 한시 특별지원</div>
+          <div class="meta">전국 · 주거 · 진행중</div>
+        </div>
+        <div class="recent-item">
+          <div class="title">청년 창업 시드 펀드</div>
+          <div class="meta">서울 · 금융 · 진행중</div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>유용한 링크</h3>
+        <!-- 모두 public 루트에 있으니 ../ 로 이동 -->
+        <a class="menu-item" href="../faq.html"><span>자주 묻는 질문</span></a>
+        <a class="menu-item" href="../guide.html"><span>이용 가이드</span></a>
+        <a class="menu-item" href="../contact.html"><span>문의하기</span></a>
+      </div>
+    </aside>
+
+    <div class="main-content">
+      <section class="hero container">
+        <h1>당신에게 맞는 지원사업을 한눈에</h1>
+        <p class="muted">키워드와 조건을 선택해 보세요.</p>
+
+        <!-- 인기 태그 -->
+        <div style="margin-bottom:16px">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+            <div style="font-weight:600;color:#adc0d4">인기 검색</div>
+            <div class="chiprow" id="popularTags"></div>
+          </div>
+        </div>
+
+        <div class="filters" id="filters">
+          <div class="f" style="grid-column: span 6">
+            <label for="q">키워드</label>
+            <div style="position:relative">
+              <input class="input" id="q" placeholder="예: 전세자금, 교육, 교통비, 창업" />
+              <div id="autocomplete" class="autocomplete-items" style="display:none"></div>
+            </div>
+          </div>
+          <div class="f" style="grid-column: span 3">
+            <label>지역</label>
+            <select class="select" id="region">
+              <option value="">전국</option>
+              <option>서울</option><option>부산</option><option>대구</option><option>인천</option>
+              <option>광주</option><option>대전</option><option>울산</option><option>세종</option>
+              <option>경기</option><option>강원</option><option>충북</option><option>충남</option>
+              <option>전북</option><option>전남</option><option>경북</option><option>경남</option>
+              <option>제주</option>
+            </select>
+          </div>
+          <div class="f" style="grid-column: span 3">
+            <label>분야</label>
+            <select class="select" id="category">
+              <option value="">전체</option>
+              <option>주거</option><option>일자리</option><option>교육</option>
+              <option>금융</option><option>복지</option><option>기타</option>
+            </select>
+          </div>
+          <div class="f" style="grid-column: span 3">
+            <label>나이(만 기준)</label>
+            <div style="display:flex;gap:8px">
+              <input class="input" id="ageMin" type="number" min="0" placeholder="최소" />
+              <input class="input" id="ageMax" type="number" min="0" placeholder="최대" />
+            </div>
+          </div>
+          <div class="f" style="grid-column: span 3">
+            <label>소득구간</label>
+            <select class="select" id="income">
+              <option value="">무관</option>
+              <option>중위소득 100% 이하</option>
+              <option>중위소득 150% 이하</option>
+              <option>중위소득 200% 이하</option>
+            </select>
+          </div>
+          <div class="f" style="grid-column: span 3">
+            <label>고용상태</label>
+            <select class="select" id="employment">
+              <option value="">무관</option>
+              <option>재직자</option>
+              <option>구직자</option>
+              <option>프리랜서/자영업</option>
+            </select>
+          </div>
+          <div class="f" style="grid-column: span 3">
+            <label>마감여부</label>
+            <select class="select" id="deadline">
+              <option value="open">진행중만</option>
+              <option value="all">전체</option>
+              <option value="closed">마감만</option>
+            </select>
+          </div>
+
+          <!-- 추가 필터 -->
+          <div class="f" style="grid-column: span 3">
+            <label>성별</label>
+            <select class="select" id="sex">
+              <option value="">무관</option>
+              <option value="male">남</option>
+              <option value="female">여</option>
+            </select>
+          </div>
+          <div class="f" style="grid-column: span 3">
+            <label>재산(원)</label>
+            <input class="input" id="asset" type="number" min="0" placeholder="예: 1000000" />
+          </div>
+          <div class="f" style="grid-column: span 6">
+            <label>관심분야 (쉼표로 구분)</label>
+            <input class="input" id="interests" placeholder="예: 창업, 주거, 교육" />
+          </div>
+          <div class="f" style="grid-column: span 12; display:flex; gap:8px; align-items:center; margin-top:4px;">
+            <button class="btn small" id="btn-save-condition">조건 저장</button>
+            <button class="btn small ghost" id="btn-load-condition">내 조건 불러오기</button>
+            <button class="btn small ghost" id="btn-clear-condition">조건 삭제</button>
+            <div style="margin-left:auto;color:var(--muted);font-size:0.9rem">
+              저장된 조건: <span id="savedLabel">없음</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="chiprow" style="margin-top:12px" id="activeChips"></div>
+      </section>
+
+      <section class="container">
+        <div class="toolbar">
+          <div id="count" class="muted">검색 결과 0건</div>
+          <div>
+            <select class="select" id="sort">
+              <option value="relevance">정확도순</option>
+              <option value="deadline">마감 임박순</option>
+              <option value="latest">최신 등록순</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="results" id="results"></div>
+        <div class="empty" id="empty" style="display:none">조건에 맞는 사업이 없습니다. 필터를 조정해 보세요.</div>
+        <div class="pagination" id="pager"></div>
+      </section>
+
+      <div class="backdrop" id="backdrop" aria-hidden="true">
+        <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+          <div class="hd">
+            <strong id="detailTitle">상세 정보</strong>
+            <button class="btn small" id="closeDetail">닫기</button>
+          </div>
+          <div class="body" id="detailBody"></div>
+        </div>
+      </div>
+
+      <footer class="container">© 2025 맞춤형 지원사업 플랫폼 · 샘플 UI</footer>
+    </div>
+  </div>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>

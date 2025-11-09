@@ -1,8 +1,6 @@
-// Frontend/client/vite.config.js
-import { defineConfig } from 'vite';
-export default defineConfig({
+export default {
+  root: './public',
   server: {
-    port: 5173,
-    open: '/support-matching-prototype.html'
+    open: '/support/support-matching-prototype.html'
   }
-});
+}
