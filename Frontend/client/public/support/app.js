@@ -601,6 +601,25 @@ console.log('✅ app.js loaded', new Date().toISOString());
     renderAuth();
     })();
 
+    // ===== 반응형 사이드바 토글 =====
+const sidebar = document.querySelector(".sidebar");
+const menuToggle = document.getElementById("menuToggle");
+
+if (menuToggle && sidebar) {
+  menuToggle.addEventListener("click", () => {
+    sidebar.classList.toggle("active");
+  });
+
+  document.addEventListener("click", (e) => {
+    const isClickInsideSidebar = sidebar.contains(e.target);
+    const isMenuButton = e.target.id === "menuToggle";
+    if (!isClickInsideSidebar && !isMenuButton) {
+      sidebar.classList.remove("active");
+    }
+  });
+}
+
+
     // 초기 렌더링
     updateCategoryCounts();
     updateSavedLabel();
