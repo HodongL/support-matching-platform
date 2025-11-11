@@ -22,6 +22,48 @@ console.log('✅ app.js loaded', new Date().toISOString());
         tags:["창업","투자"], employment:"프리랜서/자영업", updatedAt:"2025-02-12" },
     ];
 
+    // ✅ 복지로 API에서 받아올 데이터
+let welfareData = []; // 새로운 외부 API 데이터 저장용
+
+// ✅ 백엔드(Spring Boot)에서 복지로 API 데이터 불러오기
+async function loadWelfareData() {
+  try {
+    const res = await fetch("http://localhost:8080/api/welfare?pageNo=1&numOfRows=10");
+    if (!res.ok) throw new Error("서버 응답 오류: " + res.status);
+    const data = await res.json();
+
+    // 응답 구조가 data.response.body.items 형태일 경우 처리
+    const items = data?.response?.body?.items || [];
+
+    welfareData = items.map((item, idx) => ({
+      id: `W${idx + 1}`,
+      title: item.srvNm || "지원사업명 없음",
+      region: item.jurMnofNm || "전국",
+      category: "복지",
+      host: item.jurOrgNm || "기관 미상",
+      targets: item.tgtrDtlCn || "-",
+      benefit: item.alwServCn || "내용 없음",
+      period: { start: "2025-01-01", end: "2025-12-31" },
+      link: item.aplyUrl || "#",
+      contact: item.cnsgNmor || "-",
+      tags: (item.lifeArray || "").split(","),
+      updatedAt: new Date().toISOString(),
+    }));
+
+    console.log("✅ 복지로 API 불러오기 성공:", welfareData.length, "건");
+
+    // 기존 mock 데이터와 합치기
+    mock = [...mock, ...welfareData];
+
+    // 렌더링 갱신
+    applyFilters();
+
+  } catch (err) {
+    console.error("❌ 복지로 API 불러오기 실패:", err);
+  }
+}
+
+
     // 인기 태그/자동완성 데이터
     const POPULAR_TAGS = [
     { tag:"청년", count:156 },{ tag:"주거", count:89 },{ tag:"창업", count:76 },{ tag:"취업", count:67 },
