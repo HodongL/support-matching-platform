@@ -77,8 +77,8 @@ let welfareData = [];
 async function loadWelfareData() {
   try {
     console.log("🔄 복지 서비스 API 불러오는 중...");
-    const res = await fetch("http://localhost:8080/api/welfare?page=1&perPage=50");
-    if (!res.ok) throw new Error("서버 응답 오류: " + res.status);
+    const res = await fetch("http://localhost:8080/api/welfare?page=1&perPage=1000");
+    if (!res.ok) throw new Error("서버 응답 오류: " + res.status);s
     const data = await res.json();
     const items = data.data || [];
 
@@ -381,6 +381,53 @@ document.addEventListener("keydown", (e) => {
     }
   }
 });
+
+// ======================
+// 🎯 조건 저장 / 불러오기 기능
+// ======================
+document.getElementById("btn-save-condition").addEventListener("click", () => {
+  const condition = {
+    keyword: document.getElementById("keyword").value,
+    region: document.getElementById("region").value,
+    category: document.getElementById("category").value,
+    deadline: document.getElementById("deadline").value,
+    ageMin: document.getElementById("ageMin")?.value || "",
+    ageMax: document.getElementById("ageMax")?.value || "",
+    income: document.getElementById("income")?.value || "",
+    employment: document.getElementById("employment")?.value || "",
+    gender: document.getElementById("gender")?.value || "",
+    asset: document.getElementById("asset")?.value || "",
+    interests: document.getElementById("interests")?.value || ""
+  };
+
+  localStorage.setItem("savedCondition", JSON.stringify(condition));
+  alert("✅ 검색 조건이 저장되었습니다.");
+});
+
+document.getElementById("btn-load-condition").addEventListener("click", () => {
+  const saved = localStorage.getItem("savedCondition");
+  if (!saved) {
+    alert("❌ 저장된 조건이 없습니다.");
+    return;
+  }
+
+  const c = JSON.parse(saved);
+  document.getElementById("keyword").value = c.keyword || "";
+  document.getElementById("region").value = c.region || "";
+  document.getElementById("category").value = c.category || "";
+  document.getElementById("deadline").value = c.deadline || "";
+  if (document.getElementById("ageMin")) document.getElementById("ageMin").value = c.ageMin || "";
+  if (document.getElementById("ageMax")) document.getElementById("ageMax").value = c.ageMax || "";
+  if (document.getElementById("income")) document.getElementById("income").value = c.income || "";
+  if (document.getElementById("employment")) document.getElementById("employment").value = c.employment || "";
+  if (document.getElementById("gender")) document.getElementById("gender").value = c.gender || "";
+  if (document.getElementById("asset")) document.getElementById("asset").value = c.asset || "";
+  if (document.getElementById("interests")) document.getElementById("interests").value = c.interests || "";
+
+  alert("🔄 저장된 조건이 불러와졌습니다.");
+});
+
+
 
 updateCategoryCounts();
 applyFilters();
