@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/welfare")
-@CrossOrigin(origins = "*") // 프론트엔드 접근 허용 (localhost:5173 등)
+@CrossOrigin(origins = "*") // 프론트 접근 허용
 public class WelfareApiController {
 
     private final WelfareApiService welfareApiService;
@@ -16,8 +16,9 @@ public class WelfareApiController {
 
     @GetMapping
     public String getWelfareList(
-            @RequestParam(defaultValue = "1") int pageNo,
-            @RequestParam(defaultValue = "10") int numOfRows) {
-        return welfareApiService.getWelfareList(pageNo, numOfRows);
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int perPage) {
+
+        return welfareApiService.getWelfareList(page, perPage);
     }
 }
