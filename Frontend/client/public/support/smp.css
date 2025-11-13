@@ -241,7 +241,7 @@ footer {
   right: 0;
   top: 42px;
   min-width: 160px;
-  display: none;
+  display: flex;
   background: var(--panel);
   border: 1px solid #1f2a3a;
   border-radius: 12px;
@@ -258,7 +258,7 @@ footer {
   border-radius: 8px;
   background: transparent;
   color: var(--text);
-  border: none;
+  border: flex;
   cursor: pointer;
 }
 .auth-menu a:hover,

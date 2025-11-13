@@ -1,7 +1,7 @@
 console.log('✅ app.js loaded', new Date().toISOString());
 
 // ------------------------------
-// 데이터 (mock)
+// 기본 mock 데이터
 // ------------------------------
 let mock = [
   {
@@ -70,17 +70,28 @@ let mock = [
   },
 ];
 
-// ✅ 복지로 API 데이터
-let welfareData = [];
+// ------------------------------
+// 외부 API 데이터
+// ------------------------------
+let welfareData = [];      // 복지로
+let youthPolicyData = [];  // 청년정책포털
 
-// ✅ 복지 API 로드
+// ------------------------------
+// 복지로 API 로드
+// ------------------------------
 async function loadWelfareData() {
   try {
-    console.log("🔄 복지 서비스 API 불러오는 중...");
+    console.log("🔄 [복지로] 복지 서비스 API 불러오는 중...");
+    const before = mock.length;
+
     const res = await fetch("http://localhost:8080/api/welfare?page=1&perPage=1000");
-    if (!res.ok) throw new Error("서버 응답 오류: " + res.status);s
+    if (!res.ok) throw new Error("서버 응답 오류: " + res.status);
+
     const data = await res.json();
+    console.log("📥 [복지로] 원본 응답:", data);
+
     const items = data.data || [];
+    console.log("📊 [복지로] item 개수:", items.length);
 
     welfareData = items.map((item, idx) => ({
       id: `W${idx + 1}`,
@@ -97,30 +108,100 @@ async function loadWelfareData() {
       updatedAt: new Date().toISOString(),
     }));
 
-    console.log("✅ 복지 데이터 수신 완료:", welfareData.length);
+    console.log("✅ [복지로] 매핑 후 데이터:", welfareData.length);
     mock = [...mock, ...welfareData];
+
+    console.log(
+      `📌 [복지로] merge 전 ${before}건 → 후 ${mock.length}건 (추가 ${mock.length - before}건)`
+    );
+
     updateCategoryCounts();
     applyFilters();
   } catch (err) {
-    console.error("❌ 복지 API 불러오기 실패:", err);
+    console.error("❌ [복지로] API 불러오기 실패:", err);
   }
 }
 
-// ✅ 청년정책 API 로드
-async function loadPolicies() {
+// ------------------------------
+// 청년정책포털 API 로드
+// ------------------------------
+async function loadYouthPolicies() {
   try {
-    console.log("🔎 청년정책 API 호출 중...");
-    const response = await fetch("http://localhost:8080/api/youth?keyword=취업");
-    if (!response.ok) throw new Error("정책 API 응답 오류");
-    const data = await response.json();
-    console.log("✅ 청년정책 API 응답:", data);
+    console.log("🔎 [청년정책] API 호출 중...");
+
+    const before = mock.length;
+
+    const res = await fetch(
+      "http://localhost:8080/api/youth-policy/list?pageNum=1&pageSize=50&pageType=1"
+    );
+    if (!res.ok) throw new Error("정책 API 응답 오류: " + res.status);
+
+    const data = await res.json();
+    console.log("📥 [청년정책] 원본 응답:", data);
+
+    // ⭐ 여기서 실제 응답 구조에 맞춰 조정해야 함
+    const items = data.youthPolicyList || data.data || data.list || [];
+    console.log("📊 [청년정책] item 개수:", items.length);
+
+    const toDate = (raw, fallback) => {
+      if (!raw || raw.length < 8) return fallback;
+      return `${raw.slice(0, 4)}-${raw.slice(4, 6)}-${raw.slice(6, 8)}`;
+    };
+
+    youthPolicyData = items.map((item, idx) => {
+      const start = toDate(item.bizPrdBgngYmd, "2025-01-01");
+      const end = toDate(item.bizPrdEndYmd, "2025-12-31");
+
+      return {
+        id: item.plcyNo || `Y${idx + 1}`,
+        title: item.plcyNm || "제목 없음",
+        host: item.sprvsnInstCdNm || item.operInstCdNm || "기관 미상",
+        targets:
+          item.addAplyQlfcCndCn ||
+          item.ptcpPrpTrgtCn ||
+          item.plcyExplnCn ||
+          "-",
+        benefit: item.plcySprtCn || item.plcyExplnCn || "내용 없음",
+        link: item.aplyUrlAddr || item.refUrlAddr1 || "#",
+        contact:
+          item.operInstPicNm || item.sprvsnInstPicNm || "문의처 정보 없음",
+        category: "청년정책",
+        region: item.zipCd ? `코드:${item.zipCd}` : "전국",
+        period: { start, end },
+        tags: (item.plcyKywdNm || "")
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean),
+        minAge: item.sprtTrgtMinAge ? Number(item.sprtTrgtMinAge) : undefined,
+        maxAge: item.sprtTrgtMaxAge ? Number(item.sprtTrgtMaxAge) : undefined,
+        updatedAt: item.lastMdfcnDt || new Date().toISOString(),
+      };
+    });
+
+    console.log("✅ [청년정책] 매핑 후 데이터:", youthPolicyData.length);
+    mock = [...mock, ...youthPolicyData];
+
+    console.log(
+      `📌 [청년정책] merge 전 ${before}건 → 후 ${mock.length}건 (추가 ${
+        mock.length - before
+      }건)`
+    );
+
+    updateCategoryCounts();
+    applyFilters();
   } catch (err) {
-    console.error("❌ 청년정책 API 로드 실패:", err);
+    console.error("❌ [청년정책] API 로드 실패:", err);
   }
 }
 
-loadWelfareData();
-loadPolicies();
+// ------------------------------
+// 초기 로드 (윈도우 로드 뒤에 실행)
+// ------------------------------
+window.addEventListener("load", () => {
+  console.log("🌐 window load 완료, 외부 API 로드 시작");
+  loadWelfareData();
+  loadYouthPolicies();
+});
 
 // ------------------------------
 // 상수 및 상태
@@ -190,9 +271,9 @@ const inPeriod = (p) => {
 // ------------------------------
 function getFilters() {
   return {
-    q: ($("#q").value || "").trim().toLowerCase(),
-    region: $("#region").value,
-    category: $("#category").value,
+    q: ($("#q")?.value || "").trim().toLowerCase(),
+    region: $("#region")?.value || "",
+    category: $("#category")?.value || "",
     ageMin: parseInt($("#ageMin")?.value || "0", 10),
     ageMax: parseInt($("#ageMax")?.value || "200", 10),
     income: $("#income")?.value || "",
@@ -236,8 +317,8 @@ function applyFilters() {
   if (f.category) list = list.filter((p) => p.category === f.category);
 
   list = list.filter((p) => {
-    const min = p.minAge ?? 0,
-      max = p.maxAge ?? 200;
+    const min = p.minAge ?? 0;
+    const max = p.maxAge ?? 200;
     return f.ageMax >= min && f.ageMin <= max;
   });
 
@@ -288,7 +369,7 @@ function renderChips(f) {
   };
   add("지역", f.region || "전국");
   add("분야", f.category || "전체");
-  if ($("#q").value) add("키워드", $("#q").value);
+  if ($("#q")?.value) add("키워드", $("#q").value);
   add("마감", { open: "진행중만", all: "전체", closed: "마감만" }[f.deadline]);
 }
 
@@ -301,6 +382,8 @@ function render(list) {
   const container = $("#results");
   const countEl = $("#count");
   const emptyEl = $("#empty");
+  if (!container || !countEl || !emptyEl) return;
+
   container.innerHTML = "";
 
   if (!list || list.length === 0) {
@@ -324,8 +407,8 @@ function render(list) {
       <div class="desc">${p.benefit}</div>
       <div class="muted">대상: ${p.targets || "-"} (${p.host})</div>
       <div class="period">기간: ${p.period.start} ~ ${p.period.end} ${
-      live ? '<span class="live">● 진행중</span>' : "<span>마감</span>"
-    }</div>
+        live ? '<span class="live">● 진행중</span>' : "<span>마감</span>"
+      }</div>
       <div class="actions">
         <button class="btn small" onclick="openDetail('${p.id}')">자세히 보기</button>
         <a href="${p.link}" target="_blank" class="btn small ghost">공식 사이트</a>
@@ -358,53 +441,50 @@ function updateCategoryCounts() {
 // ------------------------------
 // 이벤트
 // ------------------------------
-$("#btn-search").addEventListener("click", () => {
+$("#btn-search")?.addEventListener("click", () => {
   state.page = 1;
   applyFilters();
 });
 
-$("#btn-reset").addEventListener("click", () => {
+$("#btn-reset")?.addEventListener("click", () => {
   $$("#filters .input, #filters .select").forEach((el) => (el.value = ""));
-  $("#deadline").value = "open";
+  if ($("#deadline")) $("#deadline").value = "open";
   applyFilters();
 });
 
-// ✅ [추가] 엔터키로 검색 실행 기능
+// 엔터키 검색
 document.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     const active = document.activeElement;
-    // 입력창 내부에서 Enter 누를 때만 작동
     if (active && (active.tagName === "INPUT" || active.tagName === "SELECT")) {
-      e.preventDefault(); // 폼 제출 방지
+      e.preventDefault();
       state.page = 1;
       applyFilters();
     }
   }
 });
 
-// ======================
-// 🎯 조건 저장 / 불러오기 기능
-// ======================
-document.getElementById("btn-save-condition").addEventListener("click", () => {
+// 조건 저장 / 불러오기
+document.getElementById("btn-save-condition")?.addEventListener("click", () => {
   const condition = {
-    keyword: document.getElementById("keyword").value,
-    region: document.getElementById("region").value,
-    category: document.getElementById("category").value,
-    deadline: document.getElementById("deadline").value,
+    keyword: document.getElementById("keyword")?.value || "",
+    region: document.getElementById("region")?.value || "",
+    category: document.getElementById("category")?.value || "",
+    deadline: document.getElementById("deadline")?.value || "",
     ageMin: document.getElementById("ageMin")?.value || "",
     ageMax: document.getElementById("ageMax")?.value || "",
     income: document.getElementById("income")?.value || "",
     employment: document.getElementById("employment")?.value || "",
     gender: document.getElementById("gender")?.value || "",
     asset: document.getElementById("asset")?.value || "",
-    interests: document.getElementById("interests")?.value || ""
+    interests: document.getElementById("interests")?.value || "",
   };
 
   localStorage.setItem("savedCondition", JSON.stringify(condition));
   alert("✅ 검색 조건이 저장되었습니다.");
 });
 
-document.getElementById("btn-load-condition").addEventListener("click", () => {
+document.getElementById("btn-load-condition")?.addEventListener("click", () => {
   const saved = localStorage.getItem("savedCondition");
   if (!saved) {
     alert("❌ 저장된 조건이 없습니다.");
@@ -412,10 +492,10 @@ document.getElementById("btn-load-condition").addEventListener("click", () => {
   }
 
   const c = JSON.parse(saved);
-  document.getElementById("keyword").value = c.keyword || "";
-  document.getElementById("region").value = c.region || "";
-  document.getElementById("category").value = c.category || "";
-  document.getElementById("deadline").value = c.deadline || "";
+  if (document.getElementById("keyword")) document.getElementById("keyword").value = c.keyword || "";
+  if (document.getElementById("region")) document.getElementById("region").value = c.region || "";
+  if (document.getElementById("category")) document.getElementById("category").value = c.category || "";
+  if (document.getElementById("deadline")) document.getElementById("deadline").value = c.deadline || "";
   if (document.getElementById("ageMin")) document.getElementById("ageMin").value = c.ageMin || "";
   if (document.getElementById("ageMax")) document.getElementById("ageMax").value = c.ageMax || "";
   if (document.getElementById("income")) document.getElementById("income").value = c.income || "";
@@ -427,8 +507,96 @@ document.getElementById("btn-load-condition").addEventListener("click", () => {
   alert("🔄 저장된 조건이 불러와졌습니다.");
 });
 
+// 인기 태그 / 자동완성 / 상세보기 (필요 시 사용)
+function renderPopularTags() {
+  const host = $("#popularTags");
+  if (!host) return;
+  host.innerHTML = "";
+  POPULAR_TAGS.forEach((t) => {
+    const btn = document.createElement("button");
+    btn.className = "chip ghost";
+    btn.textContent = `${t.tag} (${t.count})`;
+    btn.addEventListener("click", () => {
+      const input = $("#q") || $("#keyword");
+      if (input) input.value = t.tag;
+      state.page = 1;
+      applyFilters();
+    });
+    host.appendChild(btn);
+  });
+}
 
+function setupAutocomplete() {
+  const input = $("#interests") || $("#keyword");
+  const box = $("#autocomplete");
+  if (!input || !box) return;
 
+  input.addEventListener("input", () => {
+    const v = input.value.trim().toLowerCase();
+    box.innerHTML = "";
+    if (!v) return;
+    const cand = ALL_TAGS.filter((t) => t.toLowerCase().includes(v)).slice(0, 8);
+    cand.forEach((t) => {
+      const li = document.createElement("div");
+      li.className = "ac-item";
+      li.textContent = t;
+      li.addEventListener("click", () => {
+        input.value = t;
+        box.innerHTML = "";
+        state.page = 1;
+        applyFilters();
+      });
+      box.appendChild(li);
+    });
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!box.contains(e.target) && e.target !== input) {
+      box.innerHTML = "";
+    }
+  });
+}
+
+function openDetail(id) {
+  const p = mock.find((x) => x.id === id);
+  if (!p) return;
+
+  const modal = $("#detailModal");
+  const body = $("#detailBody");
+
+  if (modal && body) {
+    body.innerHTML = `
+      <h2>${p.title}</h2>
+      <p><strong>지역</strong>: ${p.region}</p>
+      <p><strong>분야</strong>: ${p.category}</p>
+      <p><strong>주관기관</strong>: ${p.host}</p>
+      <p><strong>대상</strong>: ${p.targets || "-"}</p>
+      <p><strong>지원내용</strong>: ${p.benefit}</p>
+      <p><strong>기간</strong>: ${p.period.start} ~ ${p.period.end}</p>
+      <p><strong>문의</strong>: ${p.contact || "-"}</p>
+      <p><strong>태그</strong>: ${(p.tags || []).join(", ")}</p>
+      <div style="margin-top:12px;">
+        <a href="${p.link}" target="_blank" class="btn small">공식 사이트 바로가기</a>
+      </div>
+    `;
+    modal.style.display = "block";
+  } else {
+    if (p.link && p.link !== "#") {
+      window.open(p.link, "_blank");
+    } else {
+      alert(`${p.title}\n\n${p.benefit}`);
+    }
+  }
+}
+
+$("#detailClose")?.addEventListener("click", () => {
+  const modal = $("#detailModal");
+  if (modal) modal.style.display = "none";
+});
+
+// ------------------------------
+// 초기 렌더링
+// ------------------------------
 updateCategoryCounts();
 applyFilters();
 renderPopularTags();
