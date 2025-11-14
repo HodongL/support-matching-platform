@@ -58,7 +58,7 @@
 
     const u = getCurrentUser();
     if(!u){
-      location.replace('mypage.html');
+      location.replace('support/support-matching-prototype.html');
     }
 
     // 내 정보 채우기
@@ -74,24 +74,37 @@
     savedHost.textContent = conditions.length ? '조건 관리에서 확인하세요.' : '비어있습니다.';
 
     // 로그아웃
-    document.getElementById('logout').onclick = () => {
-      clearSessionUser();
-      location.replace('support/support-matching-prototype.html');
-    };
+function clearAuthStorage() {
+  // 마이페이지에서 쓰는 세션 로그인 정보
+  sessionStorage.removeItem('currentUser');
+
+  // 메인 화면에서 쓰는 로그인 상태
+  localStorage.removeItem('SMP_LOGGED_USER');
+}
+
+// 로그아웃
+document.getElementById('logout').onclick = () => {
+  clearAuthStorage();
+  location.replace('support/support-matching-prototype.html');
+};
+
 
     // ===== 계정 삭제 =====
     function clearAppStorage(){
-      // 우리 앱 prefix 로컬 키 전부 제거(smp_ 로 시작하는 것들)
-      const toRemove = [];
-      for (let i=0; i<localStorage.length; i++){
-        const k = localStorage.key(i);
-        if (k && k.startsWith('smp_')) toRemove.push(k);
-      }
-      toRemove.forEach(k => localStorage.removeItem(k));
+  const toRemove = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (!k) continue;
 
-      // 세션 사용자 제거
-      clearSessionUser();
+    // smp_ 로 시작하는 키 + 로그인 상태 키까지 제거
+    if (k.startsWith('smp_') || k === 'SMP_LOGGED_USER') {
+      toRemove.push(k);
     }
+  }
+  toRemove.forEach(k => localStorage.removeItem(k));
+
+  clearAuthStorage(); // 세션/로컬 모두 정리
+}
 
     async function deleteAccountFlow(){
       // 1) 사용자 확인
@@ -118,7 +131,7 @@
       // 3) 로컬 데이터 정리 후 리다이렉트
       clearAppStorage();
       alert('계정이 삭제되었습니다.');
-      location.replace('support-matching-prototype.html');
+      location.replace('support/support-matching-prototype.html');
     }
 
     document.getElementById('deleteAccount').addEventListener('click', deleteAccountFlow);
