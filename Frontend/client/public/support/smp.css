@@ -235,13 +235,17 @@ footer {
 }
 
 /* ========================= 로그인 메뉴 ========================= */
-.auth { position: relative; }
+.auth {
+  position: relative;
+}
 .auth-menu {
   position: absolute;
   right: 0;
   top: 42px;
   min-width: 160px;
-  display: flex;
+  display: none;              /* 기본은 숨김 */
+  display: none;
+  flex-direction: column;     /* 🔹 세로 정렬 */
   background: var(--panel);
   border: 1px solid #1f2a3a;
   border-radius: 12px;
@@ -251,21 +255,20 @@ footer {
 }
 .auth-menu a,
 .auth-menu button {
-  display: block;
+  display: block;            
   width: 100%;
   text-align: left;
   padding: 8px 10px;
   border-radius: 8px;
   background: transparent;
   color: var(--text);
-  border: flex;
+  border: none;
   cursor: pointer;
 }
-.auth-menu a:hover,
+ a:hover,
 .auth-menu button:hover {
   background: #1b2330;
 }
-
 /* ========================= 모바일 대응 ========================= */
 .menu-toggle {
   display: none;

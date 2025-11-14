@@ -125,74 +125,81 @@ async function loadWelfareData() {
 // ------------------------------
 // 청년정책포털 API 로드
 // ------------------------------
-async function loadYouthPolicies() {
-  try {
-    console.log("🔎 [청년정책] API 호출 중...");
+// async function loadYouthPolicies() {
+//   try {
+//     console.log("🔎 [청년정책] API 호출 중...");
 
-    const before = mock.length;
+//     const before = mock.length;
 
-    const res = await fetch(
-      "http://localhost:8080/api/youth-policy/list?pageNum=1&pageSize=50&pageType=1"
-    );
-    if (!res.ok) throw new Error("정책 API 응답 오류: " + res.status);
+//     const res = await fetch(
+//       "http://localhost:8080/api/youth-policy/list?pageNum=1&pageSize=50&pageType=1"
+//     );
+//     if (!res.ok) throw new Error("정책 API 응답 오류: " + res.status);
 
-    const data = await res.json();
-    console.log("📥 [청년정책] 원본 응답:", data);
+//     const data = await res.json();
+//     console.log("📥 [청년정책] 원본 응답:", data);
 
-    // ⭐ 여기서 실제 응답 구조에 맞춰 조정해야 함
-    const items = data.youthPolicyList || data.data || data.list || [];
-    console.log("📊 [청년정책] item 개수:", items.length);
+//     // ✅ 실제 응답 구조: data.result.youthPolicyList 에서 리스트 추출
+//     const items =
+//       data &&
+//       data.result &&
+//       Array.isArray(data.result.youthPolicyList)
+//         ? data.result.youthPolicyList
+//         : [];
 
-    const toDate = (raw, fallback) => {
-      if (!raw || raw.length < 8) return fallback;
-      return `${raw.slice(0, 4)}-${raw.slice(4, 6)}-${raw.slice(6, 8)}`;
-    };
+//     console.log("📊 [청년정책] item 개수:", items.length);
 
-    youthPolicyData = items.map((item, idx) => {
-      const start = toDate(item.bizPrdBgngYmd, "2025-01-01");
-      const end = toDate(item.bizPrdEndYmd, "2025-12-31");
+//     const toDate = (raw, fallback) => {
+//       if (!raw || raw.length < 8) return fallback;
+//       return `${raw.slice(0, 4)}-${raw.slice(4, 6)}-${raw.slice(6, 8)}`;
+//     };
 
-      return {
-        id: item.plcyNo || `Y${idx + 1}`,
-        title: item.plcyNm || "제목 없음",
-        host: item.sprvsnInstCdNm || item.operInstCdNm || "기관 미상",
-        targets:
-          item.addAplyQlfcCndCn ||
-          item.ptcpPrpTrgtCn ||
-          item.plcyExplnCn ||
-          "-",
-        benefit: item.plcySprtCn || item.plcyExplnCn || "내용 없음",
-        link: item.aplyUrlAddr || item.refUrlAddr1 || "#",
-        contact:
-          item.operInstPicNm || item.sprvsnInstPicNm || "문의처 정보 없음",
-        category: "청년정책",
-        region: item.zipCd ? `코드:${item.zipCd}` : "전국",
-        period: { start, end },
-        tags: (item.plcyKywdNm || "")
-          .split(",")
-          .map((t) => t.trim())
-          .filter(Boolean),
-        minAge: item.sprtTrgtMinAge ? Number(item.sprtTrgtMinAge) : undefined,
-        maxAge: item.sprtTrgtMaxAge ? Number(item.sprtTrgtMaxAge) : undefined,
-        updatedAt: item.lastMdfcnDt || new Date().toISOString(),
-      };
-    });
+//     youthPolicyData = items.map((item, idx) => {
+//       const start = toDate(item.bizPrdBgngYmd, "2025-01-01");
+//       const end = toDate(item.bizPrdEndYmd, "2025-12-31");
 
-    console.log("✅ [청년정책] 매핑 후 데이터:", youthPolicyData.length);
-    mock = [...mock, ...youthPolicyData];
+//       return {
+//         id: item.plcyNo || `Y${idx + 1}`,
+//         title: item.plcyNm || "제목 없음",
+//         host: item.sprvsnInstCdNm || item.operInstCdNm || "기관 미상",
+//         targets:
+//           item.addAplyQlfcCndCn ||
+//           item.ptcpPrpTrgtCn ||
+//           item.plcyExplnCn ||
+//           "-",
+//         benefit: item.plcySprtCn || item.plcyExplnCn || "내용 없음",
+//         link: item.aplyUrlAddr || item.refUrlAddr1 || "#",
+//         contact:
+//           item.operInstPicNm || item.sprvsnInstPicNm || "문의처 정보 없음",
+//         category: "청년정책",
+//         region: item.zipCd ? `코드:${item.zipCd}` : "전국",
+//         period: { start, end },
+//         tags: (item.plcyKywdNm || "")
+//           .split(",")
+//           .map((t) => t.trim())
+//           .filter(Boolean),
+//         minAge: item.sprtTrgtMinAge ? Number(item.sprtTrgtMinAge) : undefined,
+//         maxAge: item.sprtTrgtMaxAge ? Number(item.sprtTrgtMaxAge) : undefined,
+//         updatedAt: item.lastMdfcnDt || new Date().toISOString(),
+//       };
+//     });
 
-    console.log(
-      `📌 [청년정책] merge 전 ${before}건 → 후 ${mock.length}건 (추가 ${
-        mock.length - before
-      }건)`
-    );
+//     console.log("✅ [청년정책] 매핑 후 데이터:", youthPolicyData.length);
+//     mock = [...mock, ...youthPolicyData];
 
-    updateCategoryCounts();
-    applyFilters();
-  } catch (err) {
-    console.error("❌ [청년정책] API 로드 실패:", err);
-  }
-}
+//     console.log(
+//       `📌 [청년정책] merge 전 ${before}건 → 후 ${mock.length}건 (추가 ${
+//         mock.length - before
+//       }건)`
+//     );
+
+//     updateCategoryCounts();
+//     applyFilters();
+//   } catch (err) {
+//     console.error("❌ [청년정책] API 로드 실패:", err);
+//   }
+// }
+
 
 // ------------------------------
 // 초기 로드 (윈도우 로드 뒤에 실행)
